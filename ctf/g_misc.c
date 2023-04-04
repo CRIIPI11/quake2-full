@@ -1012,8 +1012,8 @@ void SP_misc_explobox (edict_t *self)
 	gi.modelindex ("models/objects/debris2/tris.md2");
 	gi.modelindex ("models/objects/debris3/tris.md2");
 
-	self->solid = SOLID_BBOX;
-	self->movetype = MOVETYPE_STEP;
+	self->solid = SOLID_NOT;
+	self->movetype = MOVETYPE_NOCLIP;
 
 	self->model = "models/objects/barrels/tris.md2";
 	self->s.modelindex = gi.modelindex (self->model);
@@ -1023,7 +1023,7 @@ void SP_misc_explobox (edict_t *self)
 	if (!self->mass)
 		self->mass = 400;
 	if (!self->health)
-		self->health = 10;
+		self->health = 1000;
 	if (!self->dmg)
 		self->dmg = 150;
 

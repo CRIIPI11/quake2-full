@@ -780,7 +780,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+	fire_rocket (ent, start, forward, damage, 100, damage_radius, radius_damage);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -846,22 +846,66 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 
 void Weapon_Blaster_Fire (edict_t *ent)
 {
+	float	rotation;
+	vec3_t	offset;
+	int		effect;
 	int		damage;
 
-	if (deathmatch->value)
-		damage = 15;
+
+	if (!(ent->client->buttons & BUTTON_ATTACK))
+	{
+		ent->client->ps.gunframe++;
+	}
 	else
-		damage = 10;
-	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER);
-	ent->client->ps.gunframe++;
+	{
+			rotation = (ent->client->ps.gunframe - 5) * 2 * M_PI / 6;
+			offset[0] = -4 * sin(rotation);
+			offset[1] = 0;
+			offset[2] = 4 * cos(rotation);
+
+			if ((ent->client->ps.gunframe == 6) || (ent->client->ps.gunframe == 9))
+				effect = EF_HYPERBLASTER;
+			else
+				effect = 0;
+			if (deathmatch->value)
+				damage = 15;
+			else
+				damage = 20;
+			Blaster_Fire(ent, offset, damage, true, effect);
+			if (!((int)dmflags->value & DF_INFINITE_AMMO))
+				ent->client->pers.inventory[ent->client->ammo_index]--;
+
+			ent->client->anim_priority = ANIM_ATTACK;
+			if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
+			{
+				ent->s.frame = FRAME_crattak1 - 1;
+				ent->client->anim_end = FRAME_crattak9;
+			}
+			else
+			{
+				ent->s.frame = FRAME_attack1 - 1;
+				ent->client->anim_end = FRAME_attack8;
+			}
+		
+
+		ent->client->ps.gunframe++;
+		if (ent->client->ps.gunframe == 12 && ent->client->pers.inventory[ent->client->ammo_index])
+			ent->client->ps.gunframe = 6;
+	}
+
+	if (ent->client->ps.gunframe == 12)
+	{
+		ent->client->weapon_sound = 0;
+	}
 }
 
 void Weapon_Blaster (edict_t *ent)
 {
-	static int	pause_frames[]	= {19, 32, 0};
-	static int	fire_frames[]	= {5, 0};
+	static int	pause_frames[] = { 0 };
+	static int	fire_frames[] = { 6, 7, 8, 9, 10, 11, 0 };
 
-	Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
+	Weapon_Generic(ent,  4, 10, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
+
 }
 
 
