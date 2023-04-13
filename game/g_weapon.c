@@ -642,6 +642,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	rocket->dmg_radius = damage_radius;
 	rocket->s.sound = gi.soundindex ("weapons/rockfly.wav");
 	rocket->classname = "rocket";
+	
 
 	if (self->client)
 		check_dodge (self, rocket->s.origin, dir, speed);

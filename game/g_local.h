@@ -601,6 +601,8 @@ extern	gitem_t	itemlist[];
 //
 void Cmd_Help_f (edict_t *ent);
 void Cmd_Score_f (edict_t *ent);
+void Cmd_topdownCam(edict_t* ent);
+
 
 //
 // g_items.c
@@ -959,6 +961,9 @@ struct gclient_s
 
 	edict_t		*chase_target;		// player we are chasing
 	qboolean	update_chase;		// need to update chase info?
+
+	int camflag;
+	edict_t* cam;
 };
 
 
@@ -1109,5 +1114,11 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	//=========
+	int     chasedist1;
+	int     chasedist2;
 };
+
+
 
