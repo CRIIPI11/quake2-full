@@ -1379,7 +1379,7 @@ void SP_func_water (edict_t *self)
 {
 	vec3_t	abs_movedir;
 
-	G_SetMovedir (self->s.angles, self->movedir);
+	G_SetMovedir (self->client->v_angle, self->movedir);
 	self->movetype = MOVETYPE_PUSH;
 	self->solid = SOLID_BSP;
 	gi.setmodel (self, self->model);
@@ -1417,9 +1417,9 @@ void SP_func_water (edict_t *self)
 	}
 
 	VectorCopy (self->pos1, self->moveinfo.start_origin);
-	VectorCopy (self->s.angles, self->moveinfo.start_angles);
+	VectorCopy (self->client->v_angle, self->moveinfo.start_angles);
 	VectorCopy (self->pos2, self->moveinfo.end_origin);
-	VectorCopy (self->s.angles, self->moveinfo.end_angles);
+	VectorCopy (self->client->v_angle, self->moveinfo.end_angles);
 
 	self->moveinfo.state = STATE_BOTTOM;
 

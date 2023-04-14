@@ -987,7 +987,9 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
-
+	
+	//================criipi===========
+	//top-down cam
 	else if (Q_stricmp(cmd, "cam") == 0)
 	{
 		Cmd_topdownCam(ent);

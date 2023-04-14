@@ -907,7 +907,7 @@ void	SelectSpawnPoint (edict_t *ent, vec3_t origin, vec3_t angles)
 		}
 	}
 
-	VectorCopy (spot->s.origin, origin);
+	VectorSet (origin, -249.875, 528.12, -103.875);
 	origin[2] += 9;
 	VectorCopy (spot->s.angles, angles);
 }
@@ -1179,6 +1179,12 @@ void PutClientInServer (edict_t *ent)
 	ent->watertype = 0;
 	ent->flags &= ~FL_NO_KNOCKBACK;
 	ent->svflags &= ~SVF_DEADMONSTER;
+	
+	//================criipi===========
+	//top-down cam
+	ent->svflags &= ~SVF_NOCLIENT;
+	ent->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
+	
 
 	VectorCopy (mins, ent->mins);
 	VectorCopy (maxs, ent->maxs);
@@ -1226,8 +1232,8 @@ void PutClientInServer (edict_t *ent)
 	ent->s.angles[PITCH] = 0;
 	ent->s.angles[YAW] = spawn_angles[YAW];
 	ent->s.angles[ROLL] = 0;
-	VectorCopy (ent->s.angles, client->ps.viewangles);
-	VectorCopy (ent->s.angles, client->v_angle);
+	VectorSet(client->ps.viewangles, 89, ent->s.angles[YAW], 0);
+	VectorSet(client->v_angle, 89, ent->s.angles[YAW], 0);
 
 	// spawn a spectator
 	if (client->pers.spectator) {
@@ -1344,9 +1350,14 @@ void ClientBegin (edict_t *ent)
 			gi.bprintf (PRINT_HIGH, "%s entered the game\n", ent->client->pers.netname);
 		}
 	}
+	
+	//==========criipi=======
+	Cmd_topdownCam(ent);
+
 
 	// make sure all view stuff is valid
 	ClientEndServerFrame (ent);
+
 }
 
 /*
@@ -1587,6 +1598,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		return;
 	}
 
+	//================criipi===========
+	//top-down cam
+	if (client->camflag)
+		ent->client->ps.pmove.pm_flags |= PMF_NO_PREDICTION;
+	else
+		ent->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
+
+
 	pm_passent = ent;
 
 	if (ent->client->chase_target) {
@@ -1654,7 +1673,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
 			PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
 		}
-
 		ent->viewheight = pm.viewheight;
 		ent->waterlevel = pm.waterlevel;
 		ent->watertype = pm.watertype;
@@ -1670,13 +1688,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		}
 		else
 		{
-			VectorCopy (pm.viewangles, client->v_angle);
-			
+			//================criipi===========
+			//top-down cam
+			VectorSet (client->v_angle, 0, pm.viewangles[1], 0 );
+			VectorSet (ent->s.angles, 0, pm.viewangles[1], 0 );
 		}
 
-		if(ent->client->camflag)
-			VectorCopy(ent->client->cam->s.angles, client->ps.viewangles);
-
+		
 		gi.linkentity (ent);
 
 		if (ent->movetype != MOVETYPE_NOCLIP)
