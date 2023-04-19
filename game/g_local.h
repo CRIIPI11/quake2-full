@@ -968,9 +968,14 @@ struct gclient_s
 	qboolean	update_chase;		// need to update chase info?
 
 	//===============criipi============
+	//======Cam==========
 	int camflag;
 	edict_t* cam;
 	edict_t* playerModelv;
+
+	//========Loot Drops=======
+	int   next_drop;
+
 };
 
 
@@ -1122,6 +1127,10 @@ struct edict_s
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
 };
+
+//===========criipi==========
+edict_t* RandomLootDrop(void);
+
 
 
 

@@ -910,6 +910,37 @@ void Use_Item (edict_t *ent, edict_t *other, edict_t *activator)
 
 //======================================================================
 
+//=========criipi
+//===============random spawn spot=======
+edict_t* RandomLootDrop(void)
+{
+	edict_t* spot;
+	int		count = 0;
+	int		selection;
+
+	spot = NULL;
+
+	while ((spot = G_Find(spot, FOFS(classname), "random_spot")) != NULL)
+	{
+		count++;
+	}
+
+	if (!count)
+		return NULL;
+
+	count -= 2;
+
+	selection = rand() % count;
+
+	spot = NULL;
+	do
+	{
+		spot = G_Find(spot, FOFS(classname), "random_spot");
+	} while (selection--);
+
+	return spot;
+}
+
 /*
 ================
 droptofloor
@@ -938,13 +969,7 @@ void droptofloor (edict_t *ent)
 	VectorAdd (ent->s.origin, v, dest);
 
 	tr = gi.trace (ent->s.origin, ent->mins, ent->maxs, dest, ent, MASK_SOLID);
-	if (tr.startsolid)
-	{
-		gi.dprintf ("droptofloor: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
-		G_FreeEdict (ent);
-		return;
-	}
-
+	
 	VectorCopy (tr.endpos, ent->s.origin);
 
 	if (ent->team)
@@ -976,7 +1001,10 @@ void droptofloor (edict_t *ent)
 		ent->solid = SOLID_NOT;
 		ent->use = Use_Item;
 	}
-
+	//====criipi====
+	ent->nextthink = level.time + 10;
+	ent->think = G_FreeEdict;
+	
 	gi.linkentity (ent);
 }
 
@@ -1127,6 +1155,8 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 	ent->s.renderfx = RF_GLOW;
 	if (ent->model)
 		gi.modelindex (ent->model);
+	
+
 }
 
 //======================================================================

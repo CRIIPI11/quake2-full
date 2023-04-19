@@ -1184,6 +1184,7 @@ void PutClientInServer (edict_t *ent)
 	//top-down cam
 	ent->svflags &= ~SVF_NOCLIENT;
 	ent->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
+	client->next_drop = 20;
 	
 
 	VectorCopy (mins, ent->mins);
@@ -1762,6 +1763,35 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 	}
+
+
+	//========criipi=======
+	
+	if (client->next_drop < level.time)
+	{
+
+		gitem_t* it;
+		edict_t* it_ent;
+		edict_t* spot = NULL;
+
+		gi.cprintf(ent, PRINT_HIGH, "Droped Item\n");
+		client->next_drop = level.time + (rand()%10) + 1;
+
+		it = itemlist + ((rand()% game.num_items)+1);
+		
+		if (!it->pickup)
+		{
+			gi.cprintf(ent, PRINT_HIGH, "non-pickup item\n");
+			return;
+		} 
+		it_ent = G_Spawn();
+		it_ent->classname = it->classname;
+		SpawnItem(it_ent, it);
+		spot = RandomLootDrop();
+		VectorCopy(spot->s.origin, it_ent->s.origin);
+	}
+	gi.cprintf(ent, PRINT_HIGH, "origin:   %f      %f       %f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+
 }
 
 
