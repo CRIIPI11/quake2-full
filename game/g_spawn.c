@@ -268,6 +268,48 @@ spawn_t	spawns[] = {
 	{NULL, NULL}
 };
 
+
+spawn_t* findEntity(char* classname)
+{
+	spawn_t* s;
+	gitem_t* item;
+	int		i;
+
+	for (s = spawns; s->name; s++)
+	{
+		if (!strcmp(s->name, classname))
+		{	// found it
+			return s;
+		}
+	}
+}
+
+void spawn_round(void)
+{
+	int i;
+	edict_t* monst;
+	spawn_t* s;
+	edict_t* spot = NULL;
+
+	
+	for (i = 0; i <= num_monsters; i++)
+	{
+		monst = G_Spawn();
+		monst->classname = "monster_berserk";
+		s = findEntity(monst->classname);
+		s->spawn(monst);
+		spot = RandomLootDrop();
+		VectorCopy(spot->s.origin, monst->s.origin);
+
+		monst = NULL;
+		s = NULL;
+	}
+
+}
+
+
+
+
 /*
 ===============
 ED_CallSpawn
@@ -617,6 +659,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	G_FindTeams ();
 
 	PlayerTrail_Init ();
+
 }
 
 

@@ -1135,6 +1135,7 @@ edict_t* RandomLootDrop(void);
 void Drop_Weapon(edict_t* ent, gitem_t* item);
 int gunflag;
 
-
-
-
+int rond;
+int num_monsters;
+int old_num;
+void spawn_round(void);

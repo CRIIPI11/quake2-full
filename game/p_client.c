@@ -1260,6 +1260,10 @@ void PutClientInServer (edict_t *ent)
 	// force the current weapon up
 	client->newweapon = client->pers.weapon;
 	ChangeWeapon (ent);
+
+	rond = 1;
+	num_monsters = 8;
+	old_num = num_monsters;
 }
 
 /*
@@ -1358,6 +1362,8 @@ void ClientBegin (edict_t *ent)
 
 	// make sure all view stuff is valid
 	ClientEndServerFrame (ent);
+
+	spawn_round();
 
 }
 
