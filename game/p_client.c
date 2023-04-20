@@ -1766,31 +1766,38 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 
 	//========criipi=======
-	
+	//checks for next time to drop item
 	if (client->next_drop < level.time)
 	{
 
 		gitem_t* it;
 		edict_t* it_ent;
 		edict_t* spot = NULL;
-
-		gi.cprintf(ent, PRINT_HIGH, "Droped Item\n");
-		client->next_drop = level.time + (rand()%10) + 1;
-
+	
 		it = itemlist + ((rand()% game.num_items)+1);
-		
+		if (Q_strncasecmp(it->classname, "weapon_", 7) )
+		{
+			client->next_drop = level.time + 2;
+			return;
+		}
+
 		if (!it->pickup)
 		{
-			gi.cprintf(ent, PRINT_HIGH, "non-pickup item\n");
+			client->next_drop = level.time + 2;
 			return;
-		} 
+		}
+		
 		it_ent = G_Spawn();
 		it_ent->classname = it->classname;
+		client->currentgunclassname = it->classname;
 		SpawnItem(it_ent, it);
 		spot = RandomLootDrop();
 		VectorCopy(spot->s.origin, it_ent->s.origin);
+		client->next_drop = level.time + (rand() % 30) + 1;
+
 	}
-	gi.cprintf(ent, PRINT_HIGH, "origin:   %f      %f       %f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+	
+	//gi.cprintf(ent, PRINT_HIGH, "origin:   %f      %f       %f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
 
 }
 

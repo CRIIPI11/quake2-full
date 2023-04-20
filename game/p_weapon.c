@@ -159,6 +159,9 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		( !deathmatch->value || other->client->pers.weapon == FindItem("blaster") ) )
 		other->client->newweapon = ent->item;
 
+	other->client->drop = level.time + 5;
+	gunflag = 1;
+
 	return true;
 }
 
@@ -302,6 +305,15 @@ void Think_Weapon (edict_t *ent)
 			is_silenced = 0;
 		ent->client->pers.weapon->weaponthink (ent);
 	}
+	//======criipi=====
+	if (gunflag && ent->client->drop < level.time)
+	{
+		gitem_t* it;
+		it = FindItemByClassname(ent->client->currentgunclassname);
+		it->drop(ent, it);
+		gunflag = 0;
+	}
+
 }
 
 
@@ -358,15 +370,18 @@ void Drop_Weapon (edict_t *ent, gitem_t *item)
 		return;
 
 	index = ITEM_INDEX(item);
+	//=========criipi======
 	// see if we're already using it
-	if ( ((item == ent->client->pers.weapon) || (item == ent->client->newweapon))&& (ent->client->pers.inventory[index] == 1) )
+	/*if (((item == ent->client->pers.weapon) || (item == ent->client->newweapon)) && (ent->client->pers.inventory[index] == 1))
 	{
 		gi.cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
 		return;
-	}
+	}*/
 
-	Drop_Item (ent, item);
+	//Drop_Item (ent, item);
+	ent->client->newweapon = FindItem("blaster");
 	ent->client->pers.inventory[index]--;
+	
 }
 
 

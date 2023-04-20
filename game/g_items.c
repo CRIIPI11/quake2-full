@@ -1001,8 +1001,9 @@ void droptofloor (edict_t *ent)
 		ent->solid = SOLID_NOT;
 		ent->use = Use_Item;
 	}
+
 	//====criipi====
-	ent->nextthink = level.time + 10;
+	ent->nextthink = level.time + 5;
 	ent->think = G_FreeEdict;
 	
 	gi.linkentity (ent);

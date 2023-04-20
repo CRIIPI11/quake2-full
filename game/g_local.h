@@ -975,6 +975,8 @@ struct gclient_s
 
 	//========Loot Drops=======
 	int   next_drop;
+	int	  drop;
+	char* currentgunclassname;
 
 };
 
@@ -1130,6 +1132,8 @@ struct edict_s
 
 //===========criipi==========
 edict_t* RandomLootDrop(void);
+void Drop_Weapon(edict_t* ent, gitem_t* item);
+int gunflag;
 
 
 
