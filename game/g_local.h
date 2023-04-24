@@ -601,6 +601,7 @@ extern	gitem_t	itemlist[];
 //
 void Cmd_Help_f (edict_t *ent);
 void Cmd_Score_f (edict_t *ent);
+void Cmd_Round_f (edict_t *ent);
 
 //cam
 void Cmd_topdownCam(edict_t* ent);
@@ -899,6 +900,8 @@ struct gclient_s
 	qboolean	showinventory;		// set layout stat
 	qboolean	showhelp;
 	qboolean	showhelpicon;
+	//=======criipi====
+	qboolean	showround;
 
 	int			ammo_index;
 
@@ -1138,4 +1141,6 @@ int gunflag;
 int rond;
 int num_monsters;
 int old_num;
+int spawn_time;
+int active;
 void spawn_round(void);

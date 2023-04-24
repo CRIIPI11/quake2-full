@@ -160,6 +160,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		other->client->newweapon = ent->item;
 
 	other->client->drop = level.time + 5;
+	other->client->currentgunclassname = ent->item->classname;
 	gunflag = 1;
 
 	return true;
@@ -306,13 +307,13 @@ void Think_Weapon (edict_t *ent)
 		ent->client->pers.weapon->weaponthink (ent);
 	}
 	//======criipi=====
-	if (gunflag && ent->client->drop < level.time)
+	/*if (gunflag && ent->client->drop < level.time)
 	{
 		gitem_t* it;
 		it = FindItemByClassname(ent->client->currentgunclassname);
 		it->drop(ent, it);
 		gunflag = 0;
-	}
+	}*/
 
 }
 

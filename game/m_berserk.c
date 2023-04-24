@@ -170,7 +170,7 @@ void berserk_run (edict_t *self)
 void berserk_attack_spike (edict_t *self)
 {
 	static	vec3_t	aim = {MELEE_DISTANCE, 0, -24};
-	fire_hit (self, aim, (15 + (rand() % 6)), 400);		//	Faster attack -- upwards and backwards
+	fire_hit (self, aim, (15 + (rand() % 6)), 0);		//	Faster attack -- upwards and backwards
 }
 
 
@@ -198,7 +198,7 @@ void berserk_attack_club (edict_t *self)
 	vec3_t	aim;
 
 	VectorSet (aim, MELEE_DISTANCE, self->mins[0], -4);
-	fire_hit (self, aim, (5 + (rand() % 6)), 400);		// Slower attack
+	fire_hit (self, aim, (5 + (rand() % 6)), 0);		// Slower attack
 }
 
 mframe_t berserk_frames_attack_club [] =
@@ -248,10 +248,7 @@ mmove_t berserk_move_attack_strike = {FRAME_att_c21, FRAME_att_c34, berserk_fram
 
 void berserk_melee (edict_t *self)
 {
-	if ((rand() % 2) == 0)
-		self->monsterinfo.currentmove = &berserk_move_attack_spike;
-	else
-		self->monsterinfo.currentmove = &berserk_move_attack_club;
+	self->monsterinfo.currentmove = &berserk_move_attack_spike;
 }
 
 
@@ -341,6 +338,8 @@ void berserk_dead (edict_t *self)
 	self->svflags |= SVF_DEADMONSTER;
 	self->nextthink = 0;
 	gi.linkentity (self);
+	G_FreeEdict(self);
+	active--;
 }
 
 
@@ -358,7 +357,7 @@ mframe_t berserk_frames_death1 [] =
 	ai_move, 0, NULL,
 	ai_move, 0, NULL,
 	ai_move, 0, NULL,
-	ai_move, 0, NULL
+	ai_move, 0, berserk_dead
 	
 };
 mmove_t berserk_move_death1 = {FRAME_death1, FRAME_death13, berserk_frames_death1, berserk_dead};
@@ -382,18 +381,6 @@ void berserk_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 {
 	int		n;
 
-	if (self->health <= self->gib_health)
-	{
-		gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
-		for (n= 0; n < 2; n++)
-			ThrowGib (self, "models/objects/gibs/bone/tris.md2", damage, GIB_ORGANIC);
-		for (n= 0; n < 4; n++)
-			ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
-		ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
-		self->deadflag = DEAD_DEAD;
-		return;
-	}
-
 	if (self->deadflag == DEAD_DEAD)
 		return;
 
@@ -401,10 +388,8 @@ void berserk_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 	self->deadflag = DEAD_DEAD;
 	self->takedamage = DAMAGE_YES;
 
-	if (damage >= 50)
-		self->monsterinfo.currentmove = &berserk_move_death1;
-	else
-		self->monsterinfo.currentmove = &berserk_move_death2;
+	self->monsterinfo.currentmove = &berserk_move_death1;
+
 }
 
 
@@ -434,7 +419,7 @@ void SP_monster_berserk (edict_t *self)
 
 	self->health = 20;
 	self->gib_health = -60;
-	self->mass = 250;
+	self->mass = 200;
 
 	self->pain = berserk_pain;
 	self->die = berserk_die;

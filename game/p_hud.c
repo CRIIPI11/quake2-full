@@ -315,7 +315,6 @@ void HelpComputer (edict_t *ent)
 
 	// send the layout
 	Com_sprintf (string, sizeof(string),
-		"xv 32 yv 8 picn help "			// background
 		"xv 202 yv 12 string2 \"%s\" "		// skill
 		"xv 0 yv 24 cstring2 \"%s\" "		// level name
 		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
@@ -333,6 +332,24 @@ void HelpComputer (edict_t *ent)
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
 	gi.unicast (ent, true);
+}
+
+void ShowRound(edict_t* ent)
+{
+	char	string[1024];
+	
+	// send the layout
+	Com_sprintf(string, sizeof(string),
+		"xv 0 yv 24 cstring2 \"%i\" "		// level name
+		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
+		"xv 0 yv 110 cstring2 \"%s\" ",		// help 2
+		round,
+		game.helpmessage1,
+		game.helpmessage2);
+
+	gi.WriteByte(svc_layout);
+	gi.WriteString(string);
+	gi.unicast(ent, true);
 }
 
 
@@ -364,6 +381,20 @@ void Cmd_Help_f (edict_t *ent)
 	ent->client->showhelp = true;
 	ent->client->pers.helpchanged = 0;
 	HelpComputer (ent);
+}
+
+//=============criipi==========
+//round displayer
+
+void Cmd_Round_f (edict_t *ent)
+{
+	
+	ent->client->showinventory = false;
+	ent->client->showscores = false;
+
+	ent->client->showround = true;
+	ent->client->pers.helpchanged = 0;
+	ShowRound (ent);
 }
 
 

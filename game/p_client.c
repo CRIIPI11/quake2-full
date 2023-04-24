@@ -1264,6 +1264,7 @@ void PutClientInServer (edict_t *ent)
 	rond = 1;
 	num_monsters = 8;
 	old_num = num_monsters;
+	spawn_time = 5;
 }
 
 /*
@@ -1364,6 +1365,7 @@ void ClientBegin (edict_t *ent)
 	ClientEndServerFrame (ent);
 
 	spawn_round();
+	active = 1;
 
 }
 
@@ -1773,7 +1775,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	//========criipi=======
 	//checks for next time to drop item
-	if (client->next_drop < level.time)
+	/*if (client->next_drop < level.time)
 	{
 
 		gitem_t* it;
@@ -1800,6 +1802,29 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		spot = RandomLootDrop();
 		VectorCopy(spot->s.origin, it_ent->s.origin);
 		client->next_drop = level.time + (rand() % 30) + 1;
+
+	}*/
+
+	if (num_monsters > 0 && spawn_time < level.time && active < 16)
+	{
+		if (ent->client->showround)
+		{
+			ent->client->showround = false;
+			return;
+		}
+
+		spawn_round();
+		num_monsters--;
+		spawn_time = level.time + 1;
+	}
+	
+
+	if (num_monsters <= 0 && active <= 0)
+	{
+		Cmd_Round_f(ent);
+
+		spawn_time = level.time + 5;
+		num_monsters = old_num * 2;
 
 	}
 	

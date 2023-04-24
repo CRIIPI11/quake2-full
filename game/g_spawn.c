@@ -291,19 +291,13 @@ void spawn_round(void)
 	spawn_t* s;
 	edict_t* spot = NULL;
 
-	
-	for (i = 0; i <= num_monsters; i++)
-	{
-		monst = G_Spawn();
-		monst->classname = "monster_berserk";
-		s = findEntity(monst->classname);
-		s->spawn(monst);
-		spot = RandomLootDrop();
-		VectorCopy(spot->s.origin, monst->s.origin);
-
-		monst = NULL;
-		s = NULL;
-	}
+	monst = G_Spawn();
+	monst->classname = "monster_berserk";
+	s = findEntity(monst->classname);
+	s->spawn(monst);
+	spot = RandomLootDrop();
+	VectorCopy(spot->s.origin, monst->s.origin);
+	active++;
 
 }
 
