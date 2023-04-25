@@ -901,7 +901,7 @@ struct gclient_s
 	qboolean	showhelp;
 	qboolean	showhelpicon;
 	//=======criipi====
-	qboolean	showround;
+	qboolean	help;
 
 	int			ammo_index;
 
@@ -1144,3 +1144,4 @@ int old_num;
 int spawn_time;
 int active;
 void spawn_round(void);
+int changeofround;

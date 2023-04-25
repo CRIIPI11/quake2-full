@@ -266,31 +266,6 @@ void DeathmatchScoreboard (edict_t *ent)
 }
 
 
-/*
-==================
-Cmd_Score_f
-
-Display the scoreboard
-==================
-*/
-void Cmd_Score_f (edict_t *ent)
-{
-	ent->client->showinventory = false;
-	ent->client->showhelp = false;
-
-	if (!deathmatch->value && !coop->value)
-		return;
-
-	if (ent->client->showscores)
-	{
-		ent->client->showscores = false;
-		return;
-	}
-
-	ent->client->showscores = true;
-	DeathmatchScoreboard (ent);
-}
-
 
 /*
 ==================
@@ -339,19 +314,48 @@ void ShowRound(edict_t* ent)
 	char	string[1024];
 	
 	// send the layout
-	Com_sprintf(string, sizeof(string),
-		"xv 0 yv 24 cstring2 \"%i\" "		// level name
-		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
-		"xv 0 yv 110 cstring2 \"%s\" ",		// help 2
-		round,
-		game.helpmessage1,
-		game.helpmessage2);
+	if (changeofround)
+	{
+		Com_sprintf(string, sizeof(string),
+			"xv -0 yv 30 cstring2 \"Round %i\" ",		// level name
+			rond);
+	}
+	else
+	{
+		Com_sprintf(string, sizeof(string),
+			"xv -450 yv 450 cstring2 \"Round %i\" ",		// level name
+			rond);
+	}
 
 	gi.WriteByte(svc_layout);
 	gi.WriteString(string);
 	gi.unicast(ent, true);
 }
 
+/*
+==================
+Cmd_Score_f
+
+Display the scoreboard
+==================
+*/
+void Cmd_Score_f(edict_t* ent)
+{
+	ent->client->showinventory = false;
+	ent->client->showhelp = false;
+
+	if (!deathmatch->value && !coop->value)
+		return;
+
+	if (ent->client->showscores)
+	{
+		ent->client->showscores = false;
+		return;
+	}
+
+	ent->client->showscores = true;
+	ShowRound(ent);
+}
 
 /*
 ==================
@@ -362,23 +366,19 @@ Display the current help message
 */
 void Cmd_Help_f (edict_t *ent)
 {
-	// this is for backwards compatability
-	if (deathmatch->value)
-	{
-		Cmd_Score_f (ent);
-		return;
-	}
 
 	ent->client->showinventory = false;
 	ent->client->showscores = false;
 
-	if (ent->client->showhelp && (ent->client->pers.game_helpchanged == game.helpchanged))
+	if (ent->client->help)
 	{
-		ent->client->showhelp = false;
+		ent->client->help = false;
+		ShowRound(ent);
 		return;
 	}
 
 	ent->client->showhelp = true;
+	ent->client->help = true;
 	ent->client->pers.helpchanged = 0;
 	HelpComputer (ent);
 }
@@ -388,13 +388,14 @@ void Cmd_Help_f (edict_t *ent)
 
 void Cmd_Round_f (edict_t *ent)
 {
-	
+
 	ent->client->showinventory = false;
 	ent->client->showscores = false;
+	ent->client->help = false;
 
-	ent->client->showround = true;
+	ent->client->showhelp = true;
 	ent->client->pers.helpchanged = 0;
-	ShowRound (ent);
+	ShowRound(ent);
 }
 
 

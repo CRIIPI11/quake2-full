@@ -1265,6 +1265,8 @@ void PutClientInServer (edict_t *ent)
 	num_monsters = 8;
 	old_num = num_monsters;
 	spawn_time = 5;
+	
+
 }
 
 /*
@@ -1366,6 +1368,8 @@ void ClientBegin (edict_t *ent)
 
 	spawn_round();
 	active = 1;
+	changeofround = 0;
+	Cmd_Round_f(ent);
 
 }
 
@@ -1805,14 +1809,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	}*/
 
+	if (spawn_time == level.time && changeofround)
+	{ 
+		changeofround = 0;
+		Cmd_Round_f(ent);
+	}
+
 	if (num_monsters > 0 && spawn_time < level.time && active < 16)
 	{
-		if (ent->client->showround)
-		{
-			ent->client->showround = false;
-			return;
-		}
-
 		spawn_round();
 		num_monsters--;
 		spawn_time = level.time + 1;
@@ -1821,14 +1825,15 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	if (num_monsters <= 0 && active <= 0)
 	{
+		changeofround = 1;
+		rond++;
 		Cmd_Round_f(ent);
-
 		spawn_time = level.time + 5;
 		num_monsters = old_num * 2;
 
 	}
-	
-	//gi.cprintf(ent, PRINT_HIGH, "origin:   %f      %f       %f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+		
+	gi.cprintf(ent, PRINT_HIGH, "origin:   %f      %f       %f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
 
 }
 
