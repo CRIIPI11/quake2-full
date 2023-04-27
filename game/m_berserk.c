@@ -35,6 +35,7 @@ static int sound_idle;
 static int sound_punch;
 static int sound_sight;
 static int sound_search;
+Mhealth = 20;
 
 void berserk_sight (edict_t *self, edict_t *other)
 {
@@ -417,7 +418,7 @@ void SP_monster_berserk (edict_t *self)
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 
-	self->health = 20;
+	self->health = Mhealth;
 	self->gib_health = -60;
 	self->mass = 200;
 

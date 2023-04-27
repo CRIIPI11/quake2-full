@@ -217,15 +217,17 @@ C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_actor.c(401,41):
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_actor.c(496,86): warning C4100: 'surf': unreferenced formal parameter
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_actor.c(496,67): warning C4100: 'plane': unreferenced formal parameter
   m_berserk.c
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(39,45): warning C4100: 'other': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(222,31): warning C4100: 'self': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(312,57): warning C4100: 'kick': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(312,44): warning C4100: 'other': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(380,92): warning C4100: 'point': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(380,77): warning C4100: 'damage': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(380,63): warning C4100: 'attacker': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(380,43): warning C4100: 'inflictor': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(382,7): warning C4101: 'n': unreferenced local variable
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(38,9): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(38,13): warning C4218: nonstandard extension used: must specify at least a storage class or a type
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(40,45): warning C4100: 'other': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(223,31): warning C4100: 'self': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(313,57): warning C4100: 'kick': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(313,44): warning C4100: 'other': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(381,92): warning C4100: 'point': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(381,77): warning C4100: 'damage': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(381,63): warning C4100: 'attacker': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(381,43): warning C4100: 'inflictor': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(383,7): warning C4101: 'n': unreferenced local variable
   Generating Code...
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_utils.c(215): warning C4706: assignment within conditional expression
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_utils.c(232): warning C4706: assignment within conditional expression

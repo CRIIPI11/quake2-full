@@ -1145,3 +1145,4 @@ int spawn_time;
 int active;
 void spawn_round(void);
 int changeofround;
+int Mhealth;
