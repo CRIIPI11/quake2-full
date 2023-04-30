@@ -1265,6 +1265,8 @@ void PutClientInServer (edict_t *ent)
 	num_monsters = 8;
 	old_num = num_monsters;
 	spawn_time = 5;
+	client->nuke = 3;
+	client->teleport = 3;
 	
 
 }
@@ -1583,6 +1585,33 @@ void PrintPmove (pmove_t *pm)
 	Com_Printf ("sv %3i:%i %i\n", pm->cmd.impulse, c1, c2);
 }
 
+void LootSpawn(edict_t* ent)
+{
+	gitem_t* it;
+	edict_t* it_ent;
+	edict_t* spot = NULL;
+
+	it = itemlist + ((rand() % 17) + 1);
+	/*if (Q_strncasecmp(it->classname, "weapon_", 7))
+	{
+		client->next_drop = level.time + 2;
+		return;
+	}*/
+
+	if (!it->pickup)
+	{
+		ent->client->next_drop = level.time + 2;
+		return;
+	}
+
+	it_ent = G_Spawn();
+	it_ent->classname = it->classname;
+	SpawnItem(it_ent, it);
+	spot = RandomLootDrop();
+	VectorCopy(spot->s.origin, it_ent->s.origin);
+	ent->client->next_drop = level.time + (rand() % 30) + 1;
+}
+
 /*
 ==============
 ClientThink
@@ -1779,35 +1808,10 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	//========criipi=======
 	//checks for next time to drop item
-	/*if (client->next_drop < level.time)
+	if (client->next_drop < level.time)
 	{
-
-		gitem_t* it;
-		edict_t* it_ent;
-		edict_t* spot = NULL;
-	
-		it = itemlist + ((rand()% game.num_items)+1);
-		if (Q_strncasecmp(it->classname, "weapon_", 7) )
-		{
-			client->next_drop = level.time + 2;
-			return;
-		}
-
-		if (!it->pickup)
-		{
-			client->next_drop = level.time + 2;
-			return;
-		}
-		
-		it_ent = G_Spawn();
-		it_ent->classname = it->classname;
-		client->currentgunclassname = it->classname;
-		SpawnItem(it_ent, it);
-		spot = RandomLootDrop();
-		VectorCopy(spot->s.origin, it_ent->s.origin);
-		client->next_drop = level.time + (rand() % 30) + 1;
-
-	}*/
+		LootSpawn(ent);
+	}
 
 	if (spawn_time == level.time && changeofround)
 	{ 

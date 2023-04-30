@@ -411,14 +411,13 @@ void Cmd_Use_f (edict_t *ent)
 		gi.cprintf (ent, PRINT_HIGH, "Item is not usable.\n");
 		return;
 	}
-	index = ITEM_INDEX(it);
-	if (!ent->client->pers.inventory[index])
-	{
-		gi.cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
-		return;
-	}
 
-	it->use (ent, it);
+	
+	
+	it->use(ent, it);
+
+	
+	
 }
 
 

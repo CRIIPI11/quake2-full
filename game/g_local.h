@@ -981,6 +981,11 @@ struct gclient_s
 	int	  drop;
 	char* currentgunclassname;
 
+	//=========Abilities=======
+	int nuke;
+	int teleport;
+
+
 };
 
 

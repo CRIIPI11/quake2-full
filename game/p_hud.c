@@ -448,23 +448,10 @@ void G_SetStats (edict_t *ent)
 		}
 	}
 
-	index = ArmorIndex (ent);
-	if (power_armor_type && (!index || (level.framenum & 8) ) )
-	{	// flash between power armor and other armor icon
-		ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex ("i_powershield");
-		ent->client->ps.stats[STAT_ARMOR] = cells;
-	}
-	else if (index)
-	{
-		item = GetItemByIndex (index);
-		ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex (item->icon);
-		ent->client->ps.stats[STAT_ARMOR] = ent->client->pers.inventory[index];
-	}
-	else
-	{
-		ent->client->ps.stats[STAT_ARMOR_ICON] = 0;
-		ent->client->ps.stats[STAT_ARMOR] = 0;
-	}
+	
+	ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex("i_powershield");
+	ent->client->ps.stats[STAT_ARMOR] = ent->client->teleport;
+	
 
 	//
 	// pickup message
@@ -478,10 +465,10 @@ void G_SetStats (edict_t *ent)
 	//
 	// timers
 	//
-	if (ent->client->quad_framenum > level.framenum)
+	if (true)
 	{
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_quad");
-		ent->client->ps.stats[STAT_TIMER] = (ent->client->quad_framenum - level.framenum)/10;
+		ent->client->ps.stats[STAT_TIMER] = ent->client->nuke;
 	}
 	else if (ent->client->invincible_framenum > level.framenum)
 	{

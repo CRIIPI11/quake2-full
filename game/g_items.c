@@ -49,7 +49,7 @@ static int	power_shield_index;
 #define HEALTH_IGNORE_MAX	1
 #define HEALTH_TIMED		2
 
-void Use_Quad (edict_t *ent, gitem_t *item);
+void Use_Nuke(edict_t *ent, gitem_t *item);
 static int	quad_drop_timeout_hack;
 
 //======================================================================
@@ -173,9 +173,9 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 	{
 		if (!(ent->spawnflags & DROPPED_ITEM) )
 			SetRespawn (ent, ent->item->quantity);
-		if (((int)dmflags->value & DF_INSTANT_ITEMS) || ((ent->item->use == Use_Quad) && (ent->spawnflags & DROPPED_PLAYER_ITEM)))
+		if (((int)dmflags->value & DF_INSTANT_ITEMS) || ((ent->item->use == Use_Nuke) && (ent->spawnflags & DROPPED_PLAYER_ITEM)))
 		{
-			if ((ent->item->use == Use_Quad) && (ent->spawnflags & DROPPED_PLAYER_ITEM))
+			if ((ent->item->use == Use_Nuke) && (ent->spawnflags & DROPPED_PLAYER_ITEM))
 				quad_drop_timeout_hack = (ent->nextthink - level.time) / FRAMETIME;
 			ent->item->use (other, ent->item);
 		}
@@ -336,59 +336,57 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 
 //======================================================================
 
-void Use_Quad (edict_t *ent, gitem_t *item)
+void Use_Nuke (edict_t *ent, gitem_t *item)
 {
-	int		timeout;
-
-	ent->client->pers.inventory[ITEM_INDEX(item)]--;
-	ValidateSelectedItem (ent);
-
-	if (quad_drop_timeout_hack)
+	edict_t* monster;
+	if (ent->client->nuke>0)
 	{
-		timeout = quad_drop_timeout_hack;
-		quad_drop_timeout_hack = 0;
+		monster = NULL;
+		while ((monster = G_Find(monster, FOFS(classname), "monster_berserk")) != NULL)
+		{
+			monster->die(monster, NULL, ent, NULL, NULL);
+		}
+
+		ent->client->nuke--;
+		if (ent->client->nuke < 0)
+		{
+			ent->client->nuke = 0;
+		}
 	}
 	else
-	{
-		timeout = 300;
+		gi.cprintf(ent, PRINT_HIGH, "Out of Nukes\n");
+
+}
+
+//======================================================================
+void Use_Teleport(edict_t* ent, gitem_t* item)
+{
+	if(ent->client->teleport > 0)
+	{ 
+		ent->client->teleport--;
+		if (ent->client->teleport <0)
+		{
+			ent->client->teleport = 0;
+		}
 	}
-
-	if (ent->client->quad_framenum > level.framenum)
-		ent->client->quad_framenum += timeout;
 	else
-		ent->client->quad_framenum = level.framenum + timeout;
+		gi.cprintf(ent, PRINT_HIGH, "Out of Teleports\n");
 
-	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
 }
 
 //======================================================================
 
-void Use_Breather (edict_t *ent, gitem_t *item)
+void Use_Breather(edict_t* ent, gitem_t* item)
 {
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
-	ValidateSelectedItem (ent);
+	ValidateSelectedItem(ent);
 
 	if (ent->client->breather_framenum > level.framenum)
 		ent->client->breather_framenum += 300;
 	else
 		ent->client->breather_framenum = level.framenum + 300;
 
-//	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
-}
-
-//======================================================================
-
-void Use_Envirosuit (edict_t *ent, gitem_t *item)
-{
-	ent->client->pers.inventory[ITEM_INDEX(item)]--;
-	ValidateSelectedItem (ent);
-
-	if (ent->client->enviro_framenum > level.framenum)
-		ent->client->enviro_framenum += 300;
-	else
-		ent->client->enviro_framenum = level.framenum + 300;
-
-//	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
+	//	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
 }
 
 //======================================================================
@@ -1551,7 +1549,7 @@ always owned, never in the world
 */
 	{
 		"weapon_bfg",
-		Pickup_Weapon,
+		NULL,
 		Use_Weapon,
 		Drop_Weapon,
 		Weapon_BFG,
@@ -1698,7 +1696,7 @@ always owned, never in the world
 	{
 		"item_quad", 
 		Pickup_Powerup,
-		Use_Quad,
+		Use_Nuke,
 		Drop_General,
 		NULL,
 		"items/pkup.wav",
@@ -1790,7 +1788,7 @@ always owned, never in the world
 	{
 		"item_enviro",
 		Pickup_Powerup,
-		Use_Envirosuit,
+		Use_Teleport,
 		Drop_General,
 		NULL,
 		"items/pkup.wav",
