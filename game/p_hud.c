@@ -449,7 +449,7 @@ void G_SetStats (edict_t *ent)
 	}
 
 	
-	ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex("i_powershield");
+	ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex("p_quad");
 	ent->client->ps.stats[STAT_ARMOR] = ent->client->teleport;
 	
 
@@ -467,7 +467,7 @@ void G_SetStats (edict_t *ent)
 	//
 	if (true)
 	{
-		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_quad");
+		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_invulnerability");
 		ent->client->ps.stats[STAT_TIMER] = ent->client->nuke;
 	}
 	else if (ent->client->invincible_framenum > level.framenum)

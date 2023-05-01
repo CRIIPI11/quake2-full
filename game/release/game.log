@@ -65,12 +65,13 @@ C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(45,28): 
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(347,41): warning C4047: 'function': 'int' differs in levels of indirection from 'void *'
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(347,37): warning C4024: 'function through pointer': different types for formal and actual parameter 4
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(339,39): warning C4100: 'item': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(362,42): warning C4100: 'item': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(703,45): warning C4100: 'item': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(759,77): warning C4100: 'surf': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(759,58): warning C4100: 'plane': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(890,55): warning C4100: 'activator': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(890,39): warning C4100: 'other': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(366,7): warning C4101: 'n': unreferenced local variable
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(415,42): warning C4100: 'item': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(761,45): warning C4100: 'item': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(817,77): warning C4100: 'surf': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(817,58): warning C4100: 'plane': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(948,55): warning C4100: 'activator': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(948,39): warning C4100: 'other': unreferenced formal parameter
   g_main.c
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_main.c(148,2): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_main.c(160,2): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.

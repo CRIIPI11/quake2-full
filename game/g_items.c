@@ -358,11 +358,69 @@ void Use_Nuke (edict_t *ent, gitem_t *item)
 
 }
 
+float far2(edict_t* spot, edict_t* ent)
+{
+
+	float	bestplayerdistance;
+	vec3_t	v;
+	int		n;
+	float	playerdistance;
+
+
+	bestplayerdistance = 9999999;
+
+	VectorSubtract(spot->s.origin, ent->s.origin, v);
+	playerdistance = VectorLength(v);
+
+	if (playerdistance < bestplayerdistance)
+		bestplayerdistance = playerdistance;
+	
+	return bestplayerdistance;
+}
+
+edict_t* RandomTeleport(edict_t* ent)
+{
+	edict_t* bestspot;
+	float	bestdistance, bestplayerdistance;
+	edict_t* spot;
+
+
+	spot = NULL;
+	bestspot = NULL;
+	bestdistance = 0;
+	while ((spot = G_Find(spot, FOFS(classname), "random_teleport_spot")) != NULL)
+	{
+		bestplayerdistance = far2(spot, ent);
+
+		if (bestplayerdistance > bestdistance)
+		{
+			bestspot = spot;
+			bestdistance = bestplayerdistance;
+		}
+	}
+
+	if (bestspot)
+	{
+		return bestspot;
+	}
+
+	// if there is a player just spawned on each and every start spot
+	// we have no choice to turn one into a telefrag meltdown
+	spot = G_Find(NULL, FOFS(classname), "random_teleport_spot");
+
+	return spot;
+}
+
 //======================================================================
 void Use_Teleport(edict_t* ent, gitem_t* item)
 {
+	edict_t* spot;
+
 	if(ent->client->teleport > 0)
 	{ 
+		spot = RandomTeleport(ent);
+		VectorCopy(spot->s.origin, ent->s.origin);
+
 		ent->client->teleport--;
 		if (ent->client->teleport <0)
 		{
