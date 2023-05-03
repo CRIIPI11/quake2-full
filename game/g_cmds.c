@@ -456,6 +456,30 @@ void Cmd_Drop_f (edict_t *ent)
 	it->drop (ent, it);
 }
 
+void Cmd_Drops_f(edict_t* ent)
+{
+	int			index;
+	gitem_t* it;
+	char* s;
+
+	s = gi.args();
+	it = FindItem(s);
+	
+	if (!it)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "unknown item: %s\n", s);
+		return;
+	}
+	if (!it->drop)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Item is not dropable.\n");
+		return;
+	}
+	
+
+	it->drop(ent, it);
+}
+
 
 /*
 =================
@@ -946,6 +970,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Use_f (ent);
 	else if (Q_stricmp (cmd, "drop") == 0)
 		Cmd_Drop_f (ent);
+	else if (Q_stricmp(cmd, "drops") == 0)
+		Cmd_Drops_f(ent);
 	else if (Q_stricmp (cmd, "give") == 0)
 		Cmd_Give_f (ent);
 	else if (Q_stricmp (cmd, "god") == 0)

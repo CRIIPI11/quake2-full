@@ -1151,3 +1151,9 @@ int active;
 void spawn_round(void);
 int changeofround;
 int Mhealth;
+
+
+void Spawn_Chicken(edict_t* powerup, edict_t* ent);
+void Spawn_Monkey(vec3_t origin, edict_t* ent);
+void barrel_explode(edict_t* self);
+void func_explosive_explode(edict_t* self, edict_t* inflictor, edict_t* attacker, int damage, vec3_t point);

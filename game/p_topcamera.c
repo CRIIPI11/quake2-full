@@ -5,7 +5,7 @@ void c_think(edict_t *self) {
 	vec3_t forward, right, up, angles;
 	vec3_t spot1, spot2, dir;
 		
-	self->nextthink = level.time + 0.100;
+	self->nextthink = level.time + FRAMETIME;
 	VectorSet(self->s.origin, self->owner->s.origin[0], self->owner->s.origin[1], 190);
 	gi.linkentity(self);
 	gi.linkentity(self->owner);

@@ -187,8 +187,6 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 void Drop_General (edict_t *ent, gitem_t *item)
 {
 	Drop_Item (ent, item);
-	ent->client->pers.inventory[ITEM_INDEX(item)]--;
-	ValidateSelectedItem (ent);
 }
 
 
@@ -660,84 +658,41 @@ int ArmorIndex (edict_t *ent)
 	return 0;
 }
 
-qboolean Pickup_Armor (edict_t *ent, edict_t *other)
+//================criipi======================
+//======Pick up Perks and abilities=============
+
+qboolean Pickup_Nukes(edict_t *ent, edict_t *other)
 {
-	int				old_armor_index;
-	gitem_armor_t	*oldinfo;
-	gitem_armor_t	*newinfo;
-	int				newcount;
-	float			salvage;
-	int				salvagecount;
-
-	// get info on new armor
-	newinfo = (gitem_armor_t *)ent->item->info;
-
-	old_armor_index = ArmorIndex (other);
-
-	// handle armor shards specially
-	if (ent->item->tag == ARMOR_SHARD)
-	{
-		if (!old_armor_index)
-			other->client->pers.inventory[jacket_armor_index] = 2;
-		else
-			other->client->pers.inventory[old_armor_index] += 2;
-	}
-
-	// if player has no armor, just use it
-	else if (!old_armor_index)
-	{
-		other->client->pers.inventory[ITEM_INDEX(ent->item)] = newinfo->base_count;
-	}
-
-	// use the better armor
-	else
-	{
-		// get info on old armor
-		if (old_armor_index == jacket_armor_index)
-			oldinfo = &jacketarmor_info;
-		else if (old_armor_index == combat_armor_index)
-			oldinfo = &combatarmor_info;
-		else // (old_armor_index == body_armor_index)
-			oldinfo = &bodyarmor_info;
-
-		if (newinfo->normal_protection > oldinfo->normal_protection)
-		{
-			// calc new armor values
-			salvage = oldinfo->normal_protection / newinfo->normal_protection;
-			salvagecount = salvage * other->client->pers.inventory[old_armor_index];
-			newcount = newinfo->base_count + salvagecount;
-			if (newcount > newinfo->max_count)
-				newcount = newinfo->max_count;
-
-			// zero count of old armor so it goes away
-			other->client->pers.inventory[old_armor_index] = 0;
-
-			// change armor to new item with computed value
-			other->client->pers.inventory[ITEM_INDEX(ent->item)] = newcount;
-		}
-		else
-		{
-			// calc new armor values
-			salvage = newinfo->normal_protection / oldinfo->normal_protection;
-			salvagecount = salvage * newinfo->base_count;
-			newcount = other->client->pers.inventory[old_armor_index] + salvagecount;
-			if (newcount > oldinfo->max_count)
-				newcount = oldinfo->max_count;
-
-			// if we're already maxed out then we don't need the new armor
-			if (other->client->pers.inventory[old_armor_index] >= newcount)
-				return false;
-
-			// update current armor value
-			other->client->pers.inventory[old_armor_index] = newcount;
-		}
-	}
-
-	if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
-		SetRespawn (ent, 20);
+	other->client->nuke++;
 
 	return true;
 }
+
+qboolean Pickup_Teleport(edict_t* ent, edict_t* other)
+{
+	other->client->teleport++;
+
+	return true;
+}
+
+qboolean Pickup_Armor(edict_t* ent, edict_t* other)
+{
+
+	return true;
+}
+
+qboolean Pickup_Chicken(edict_t* ent, edict_t* other)
+{
+	Spawn_Chicken(ent, other);
+	return true;
+}
+
+qboolean Pickup_Monkey(edict_t* ent, edict_t* other)
+{
+	Spawn_Monkey(ent->s.origin, other);
+	return true;
+}
+
 
 //======================================================================
 
@@ -1232,7 +1187,7 @@ gitem_t	itemlist[] =
 */
 	{
 		"item_armor_body", 
-		Pickup_Armor,
+		Pickup_Nukes,
 		NULL,
 		NULL,
 		NULL,
@@ -1254,103 +1209,103 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_combat (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_combat", 
-		Pickup_Armor,
+	"item_armor_combat",
+		Pickup_Teleport,
 		NULL,
-		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar1_pkup.wav",
 		"models/items/armor/combat/tris.md2", EF_ROTATE,
 		NULL,
-/* icon */		"i_combatarmor",
-/* pickup */	"Combat Armor",
-/* width */		3,
+		/* icon */		"i_combatarmor",
+		/* pickup */	"Combat Armor",
+		/* width */		3,
 		0,
 		NULL,
 		IT_ARMOR,
 		0,
-		&combatarmor_info,
+		& combatarmor_info,
 		ARMOR_COMBAT,
-/* precache */ ""
+		/* precache */ ""
 	},
 
-/*QUAKED item_armor_jacket (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
+		/*QUAKED item_armor_jacket (.3 .3 1) (-16 -16 -16) (16 16 16)
+		*/
 	{
-		"item_armor_jacket", 
-		Pickup_Armor,
+		"item_armor_jacket",
+		Pickup_Chicken,
 		NULL,
-		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar1_pkup.wav",
 		"models/items/armor/jacket/tris.md2", EF_ROTATE,
 		NULL,
-/* icon */		"i_jacketarmor",
-/* pickup */	"Jacket Armor",
-/* width */		3,
-		0,
-		NULL,
-		IT_ARMOR,
-		0,
-		&jacketarmor_info,
-		ARMOR_JACKET,
-/* precache */ ""
+		/* icon */		"i_jacketarmor",
+		/* pickup */	"Jacket Armor",
+		/* width */		3,
+				0,
+				NULL,
+				IT_ARMOR,
+				0,
+				&jacketarmor_info,
+				ARMOR_JACKET,
+				/* precache */ ""
 	},
 
-/*QUAKED item_armor_shard (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
+		/*QUAKED item_armor_shard (.3 .3 1) (-16 -16 -16) (16 16 16)
+		*/
 	{
-		"item_armor_shard", 
-		Pickup_Armor,
+		"item_armor_shard",
+		Pickup_Monkey,
 		NULL,
-		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar2_pkup.wav",
 		"models/items/armor/shard/tris.md2", EF_ROTATE,
 		NULL,
-/* icon */		"i_jacketarmor",
-/* pickup */	"Armor Shard",
-/* width */		3,
-		0,
-		NULL,
-		IT_ARMOR,
-		0,
-		NULL,
-		ARMOR_SHARD,
-/* precache */ ""
+		/* icon */		"i_jacketarmor",
+		/* pickup */	"Armor Shard",
+		/* width */		3,
+				0,
+				NULL,
+				IT_ARMOR,
+				0,
+				NULL,
+				ARMOR_SHARD,
+				/* precache */ ""
 	},
 
 
-/*QUAKED item_power_screen (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
+		/*QUAKED item_power_screen (.3 .3 1) (-16 -16 -16) (16 16 16)
+		*/
 	{
-		"item_power_screen", 
-		Pickup_PowerArmor,
-		Use_PowerArmor,
-		Drop_PowerArmor,
+		"item_power_screen",
+		Pickup_Armor,
+		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar3_pkup.wav",
 		"models/items/armor/screen/tris.md2", EF_ROTATE,
 		NULL,
-/* icon */		"i_powerscreen",
-/* pickup */	"Power Screen",
-/* width */		0,
-		60,
-		NULL,
-		IT_ARMOR,
-		0,
-		NULL,
-		0,
-/* precache */ ""
+		/* icon */		"i_powerscreen",
+		/* pickup */	"Power Screen",
+		/* width */		0,
+				60,
+				NULL,
+				IT_ARMOR,
+				0,
+				NULL,
+				0,
+				/* precache */ ""
 	},
 
-/*QUAKED item_power_shield (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
+		/*QUAKED item_power_shield (.3 .3 1) (-16 -16 -16) (16 16 16)
+		*/
 	{
 		"item_power_shield",
-		Pickup_PowerArmor,
-		Use_PowerArmor,
-		Drop_PowerArmor,
+		Pickup_Armor,
+		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar3_pkup.wav",
 		"models/items/armor/shield/tris.md2", EF_ROTATE,
