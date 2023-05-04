@@ -984,7 +984,7 @@ struct gclient_s
 	//=========Abilities=======
 	int nuke;
 	int teleport;
-
+	int upgradedtime;
 
 };
 
@@ -1148,12 +1148,15 @@ int num_monsters;
 int old_num;
 int spawn_time;
 int active;
-void spawn_round(void);
+void spawn_round(edict_t* ent);
 int changeofround;
 int Mhealth;
+int upgraded;
 
 
 void Spawn_Chicken(edict_t* powerup, edict_t* ent);
 void Spawn_Monkey(vec3_t origin, edict_t* ent);
 void barrel_explode(edict_t* self);
 void func_explosive_explode(edict_t* self, edict_t* inflictor, edict_t* attacker, int damage, vec3_t point);
+
+#define UPGRADED 2

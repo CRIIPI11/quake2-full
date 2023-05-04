@@ -1267,6 +1267,7 @@ void PutClientInServer (edict_t *ent)
 	spawn_time = 5;
 	client->nuke = 3;
 	client->teleport = 3;
+	upgraded = 0;
 	
 
 }
@@ -1368,7 +1369,7 @@ void ClientBegin (edict_t *ent)
 	// make sure all view stuff is valid
 	ClientEndServerFrame (ent);
 
-	spawn_round();
+	spawn_round(ent);
 	active = 1;
 	changeofround = 0;
 	Cmd_Round_f(ent);
@@ -1821,7 +1822,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	if (num_monsters > 0 && spawn_time < level.time && active < 16)
 	{
-		spawn_round();
+		spawn_round(ent);
 		num_monsters--;
 		spawn_time = level.time + 1;
 	}
@@ -1837,8 +1838,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		old_num = num_monsters;
 		Mhealth += 2;
 	}
+
+	if (upgraded && ent->client->upgradedtime < level.time)
+	{
+		upgraded = 0;
+	}
 		
 	//gi.cprintf(ent, PRINT_HIGH, "origin:   %f      %f       %f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+	gi.cprintf(ent, PRINT_HIGH, "upgrader:   %i\n", upgraded);
 
 }
 

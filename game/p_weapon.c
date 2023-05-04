@@ -158,8 +158,13 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		(other->client->pers.inventory[index] == 1) &&
 		( !deathmatch->value || other->client->pers.weapon == FindItem("blaster") ) )
 		other->client->newweapon = ent->item;
+	
+	if (upgraded)
+	{
+		upgraded = 0;
+	}
 
-	other->client->drop = level.time + 10;
+	other->client->drop = level.time + 15;
 	other->client->currentgunclassname = ent->item->classname;
 	gunflag = 1;
 
@@ -306,6 +311,7 @@ void Think_Weapon (edict_t *ent)
 			is_silenced = 0;
 		ent->client->pers.weapon->weaponthink (ent);
 	}
+
 	//======criipi=====
 	if (gunflag && ent->client->drop < level.time)
 	{
@@ -385,6 +391,10 @@ void Drop_Weapon (edict_t *ent, gitem_t *item)
 	//Drop_Item (ent, item);
 	ent->client->newweapon = FindItem("blaster");
 	ent->client->pers.inventory[index]--;
+	if (upgraded)
+	{
+		upgraded = 0;
+	}
 	
 }
 
@@ -737,7 +747,11 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
+	if(upgraded)
+		fire_grenade (ent, start, forward, damage*UPGRADED, 600, 2.5, radius);
+	else
+		fire_grenade(ent, start, forward, damage, 600, 2.5, radius);
+
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -792,7 +806,10 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+	if(upgraded)
+		fire_rocket (ent, start, forward, damage * UPGRADED, 650, damage_radius*UPGRADED, radius_damage);
+	else
+		fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -841,8 +858,11 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
-
+	if (upgraded)
+		fire_blaster (ent, start, forward, damage*UPGRADED, 1000, effect, hyper);
+	else
+		fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+	
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1023,7 +1043,10 @@ void Machinegun_Fire (edict_t *ent)
 	AngleVectors (angles, forward, right, NULL);
 	VectorSet(offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	if (upgraded)
+		fire_bullet (ent, start, forward, damage*UPGRADED, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	else	
+		fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1160,7 +1183,10 @@ void Chaingun_Fire (edict_t *ent)
 		VectorSet(offset, 0, r, u + ent->viewheight-8);
 		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
-		fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
+		if (upgraded)
+			fire_bullet (ent, start, forward, damage*UPGRADED, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
+		else
+			fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
 	}
 
 	// send muzzle flash
@@ -1221,8 +1247,8 @@ void weapon_shotgun_fire (edict_t *ent)
 		kick *= 4;
 	}
 
-	if (deathmatch->value)
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
+	if (upgraded)
+		fire_shotgun (ent, start, forward, damage*UPGRADED, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
 	else
 		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
 
@@ -1265,10 +1291,10 @@ void weapon_supershotgun_fire (edict_t *ent)
 	VectorSet(offset, 0, 8,  ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
-	if (is_quad)
+	if (upgraded)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= UPGRADED;
+		kick *= UPGRADED;
 	}
 
 	v[PITCH] = ent->client->v_angle[PITCH];
@@ -1330,10 +1356,10 @@ void weapon_railgun_fire (edict_t *ent)
 		kick = 250;
 	}
 
-	if (is_quad)
+	if (upgraded)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= UPGRADED;
+		kick *= UPGRADED;
 	}
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
@@ -1410,8 +1436,8 @@ void weapon_bfg_fire (edict_t *ent)
 		return;
 	}
 
-	if (is_quad)
-		damage *= 4;
+	if (upgraded)
+		damage *= UPGRADED;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 

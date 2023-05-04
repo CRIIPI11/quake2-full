@@ -215,13 +215,13 @@ void Cmd_Give_f (edict_t *ent)
 	{
 		gitem_armor_t	*info;
 
-		it = FindItem("Jacket Armor");
+		it = FindItem("Chicken");
 		ent->client->pers.inventory[ITEM_INDEX(it)] = 0;
 
-		it = FindItem("Combat Armor");
+		it = FindItem("Teleport");
 		ent->client->pers.inventory[ITEM_INDEX(it)] = 0;
 
-		it = FindItem("Body Armor");
+		it = FindItem("Nukes");
 		info = (gitem_armor_t *)it->info;
 		ent->client->pers.inventory[ITEM_INDEX(it)] = info->max_count;
 

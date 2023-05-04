@@ -13,8 +13,12 @@ void sound(edict_t* self)
 	monster = NULL;
 	while ((monster = G_Find(monster, FOFS(classname), "monster_berserk")) != NULL)
 	{
+		monster->activator = self;
+		monster->movetarget = self;
 		monster->enemy = self;
-		monster->goalentity = self;
+		VectorCopy(self->s.origin, monster->movedir);
+
+		gi.linkentity(monster);
 	}
 	
 	//gi.sound(self, CHAN_VOICE, gi.soundindex("plats/pt1_end.wav"), 1, ATTN_NORM, 0);

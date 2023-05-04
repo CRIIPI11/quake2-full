@@ -681,6 +681,18 @@ qboolean Pickup_Armor(edict_t* ent, edict_t* other)
 	return true;
 }
 
+qboolean Pickup_Upgrader(edict_t* ent, edict_t* other)
+{
+	upgraded = 1;
+	if (other->client->upgradedtime < level.time)
+		other->client->upgradedtime = level.time + 15;
+	else
+		other->client->upgradedtime += 15;
+
+
+	return true;
+}
+
 qboolean Pickup_Chicken(edict_t* ent, edict_t* other)
 {
 	Spawn_Chicken(ent, other);
@@ -1195,7 +1207,7 @@ gitem_t	itemlist[] =
 		"models/items/armor/body/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"i_bodyarmor",
-/* pickup */	"Body Armor",
+/* pickup */	"Nukes",
 /* width */		3,
 		0,
 		NULL,
@@ -1218,7 +1230,7 @@ gitem_t	itemlist[] =
 		"models/items/armor/combat/tris.md2", EF_ROTATE,
 		NULL,
 		/* icon */		"i_combatarmor",
-		/* pickup */	"Combat Armor",
+		/* pickup */	"Teleport",
 		/* width */		3,
 		0,
 		NULL,
@@ -1241,7 +1253,7 @@ gitem_t	itemlist[] =
 		"models/items/armor/jacket/tris.md2", EF_ROTATE,
 		NULL,
 		/* icon */		"i_jacketarmor",
-		/* pickup */	"Jacket Armor",
+		/* pickup */	"Chicken",
 		/* width */		3,
 				0,
 				NULL,
@@ -1264,7 +1276,7 @@ gitem_t	itemlist[] =
 		"models/items/armor/shard/tris.md2", EF_ROTATE,
 		NULL,
 		/* icon */		"i_jacketarmor",
-		/* pickup */	"Armor Shard",
+		/* pickup */	"Monkey",
 		/* width */		3,
 				0,
 				NULL,
@@ -1280,7 +1292,7 @@ gitem_t	itemlist[] =
 		*/
 	{
 		"item_power_screen",
-		Pickup_Armor,
+		Pickup_Upgrader,
 		NULL,
 		Drop_General,
 		NULL,
@@ -1288,7 +1300,7 @@ gitem_t	itemlist[] =
 		"models/items/armor/screen/tris.md2", EF_ROTATE,
 		NULL,
 		/* icon */		"i_powerscreen",
-		/* pickup */	"Power Screen",
+		/* pickup */	"Upgrader",
 		/* width */		0,
 				60,
 				NULL,
@@ -2250,9 +2262,9 @@ void SetItemNames (void)
 		gi.configstring (CS_ITEMS+i, it->pickup_name);
 	}
 
-	jacket_armor_index = ITEM_INDEX(FindItem("Jacket Armor"));
-	combat_armor_index = ITEM_INDEX(FindItem("Combat Armor"));
-	body_armor_index   = ITEM_INDEX(FindItem("Body Armor"));
-	power_screen_index = ITEM_INDEX(FindItem("Power Screen"));
+	jacket_armor_index = ITEM_INDEX(FindItem("Chicken"));
+	combat_armor_index = ITEM_INDEX(FindItem("Teleport"));
+	body_armor_index   = ITEM_INDEX(FindItem("Nukes"));
+	power_screen_index = ITEM_INDEX(FindItem("Upgrader"));
 	power_shield_index = ITEM_INDEX(FindItem("Power Shield"));
 }

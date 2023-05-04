@@ -368,7 +368,7 @@ edict_t* RandomMonsterSpawn(void)
 	return spot;
 }
 
-void spawn_round(void)
+void spawn_round(edict_t* ent)
 {
 	int i;
 	edict_t* monst;
