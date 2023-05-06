@@ -215,13 +215,13 @@ void Cmd_Give_f (edict_t *ent)
 	{
 		gitem_armor_t	*info;
 
-		it = FindItem("Jacket Armor");
+		it = FindItem("Chicken");
 		ent->client->pers.inventory[ITEM_INDEX(it)] = 0;
 
-		it = FindItem("Combat Armor");
+		it = FindItem("Teleport");
 		ent->client->pers.inventory[ITEM_INDEX(it)] = 0;
 
-		it = FindItem("Body Armor");
+		it = FindItem("Nukes");
 		info = (gitem_armor_t *)it->info;
 		ent->client->pers.inventory[ITEM_INDEX(it)] = info->max_count;
 
@@ -229,9 +229,9 @@ void Cmd_Give_f (edict_t *ent)
 			return;
 	}
 
-	if (give_all || Q_stricmp(name, "Power Shield") == 0)
+	if (give_all || Q_stricmp(name, "Health") == 0)
 	{
-		it = FindItem("Power Shield");
+		it = FindItem("Health");
 		it_ent = G_Spawn();
 		it_ent->classname = it->classname;
 		SpawnItem (it_ent, it);
@@ -411,14 +411,13 @@ void Cmd_Use_f (edict_t *ent)
 		gi.cprintf (ent, PRINT_HIGH, "Item is not usable.\n");
 		return;
 	}
-	index = ITEM_INDEX(it);
-	if (!ent->client->pers.inventory[index])
-	{
-		gi.cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
-		return;
-	}
 
-	it->use (ent, it);
+	
+	
+	it->use(ent, it);
+
+	
+	
 }
 
 
@@ -455,6 +454,30 @@ void Cmd_Drop_f (edict_t *ent)
 	}
 
 	it->drop (ent, it);
+}
+
+void Cmd_Drops_f(edict_t* ent)
+{
+	int			index;
+	gitem_t* it;
+	char* s;
+
+	s = gi.args();
+	it = FindItem(s);
+	
+	if (!it)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "unknown item: %s\n", s);
+		return;
+	}
+	if (!it->drop)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Item is not dropable.\n");
+		return;
+	}
+	
+
+	it->drop(ent, it);
 }
 
 
@@ -947,6 +970,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Use_f (ent);
 	else if (Q_stricmp (cmd, "drop") == 0)
 		Cmd_Drop_f (ent);
+	else if (Q_stricmp(cmd, "drops") == 0)
+		Cmd_Drops_f(ent);
 	else if (Q_stricmp (cmd, "give") == 0)
 		Cmd_Give_f (ent);
 	else if (Q_stricmp (cmd, "god") == 0)
@@ -987,6 +1012,14 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	
+	//================criipi===========
+	//top-down cam
+	else if (Q_stricmp(cmd, "cam") == 0)
+	{
+		Cmd_topdownCam(ent);
+		gi.cprintf(ent, PRINT_HIGH, "%i\n", ent->client->camflag);
+	}	
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

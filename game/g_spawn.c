@@ -146,10 +146,10 @@ void SP_turret_driver (edict_t *self);
 
 
 spawn_t	spawns[] = {
-	{"item_health", SP_item_health},
+	/*{"item_health", SP_item_health},
 	{"item_health_small", SP_item_health_small},
 	{"item_health_large", SP_item_health_large},
-	{"item_health_mega", SP_item_health_mega},
+	{"item_health_mega", SP_item_health_mega},*/
 
 	{"info_player_start", SP_info_player_start},
 	{"info_player_deathmatch", SP_info_player_deathmatch},
@@ -237,7 +237,7 @@ spawn_t	spawns[] = {
 	{"misc_easterchick2", SP_misc_easterchick2},
 
 	{"monster_berserk", SP_monster_berserk},
-	{"monster_gladiator", SP_monster_gladiator},
+	/*{"monster_gladiator", SP_monster_gladiator},
 	{"monster_gunner", SP_monster_gunner},
 	{"monster_infantry", SP_monster_infantry},
 	{"monster_soldier_light", SP_monster_soldier_light},
@@ -257,7 +257,7 @@ spawn_t	spawns[] = {
 	{"monster_supertank", SP_monster_supertank},
 	{"monster_boss2", SP_monster_boss2},
 	{"monster_boss3_stand", SP_monster_boss3_stand},
-	{"monster_jorg", SP_monster_jorg},
+	{"monster_jorg", SP_monster_jorg},*/
 
 	{"monster_commander_body", SP_monster_commander_body},
 
@@ -267,6 +267,129 @@ spawn_t	spawns[] = {
 
 	{NULL, NULL}
 };
+
+
+spawn_t* findEntity(char* classname)
+{
+	spawn_t* s;
+	gitem_t* item;
+	int		i;
+
+	for (s = spawns; s->name; s++)
+	{
+		if (!strcmp(s->name, classname))
+		{	// found it
+			return s;
+		}
+	}
+}
+
+//====criipi============================================================
+//Functions to spawn a monster in a round
+
+float far(edict_t* spot)
+{
+	edict_t* monster;
+	float	bestplayerdistance;
+	vec3_t	v;
+	int		n;
+	float	playerdistance;
+
+
+	bestplayerdistance = 9999999;
+
+	for (n = 1; n <= maxclients->value; n++)
+	{
+		monster = &g_edicts[n];
+
+		if (!monster->inuse)
+			continue;
+		
+		if (Q_strcasecmp(monster->classname, "monster_berserk") != 0)
+			continue;
+
+		if (monster->health <= 0)
+			continue;
+
+		VectorSubtract(spot->s.origin, monster->s.origin, v);
+		playerdistance = VectorLength(v);
+
+		if (playerdistance < bestplayerdistance)
+			bestplayerdistance = playerdistance;
+	}
+
+	return bestplayerdistance;
+}
+
+edict_t* RandomMonsterSpawn(void)
+{
+	edict_t* spot, * spot1, * spot2;
+	int		count = 0;
+	int		selection;
+	float	range, range1, range2;
+
+	spot = NULL;
+	range1 = range2 = 99999;
+	spot1 = spot2 = NULL;
+
+	while ((spot = G_Find(spot, FOFS(classname), "random_monster_spot")) != NULL)
+	{
+		count++;
+		range = far(spot);
+		if (range < range1)
+		{
+			range1 = range;
+			spot1 = spot;
+		}
+		else if (range < range2)
+		{
+			range2 = range;
+			spot2 = spot;
+		}
+	}
+
+	if (!count)
+		return NULL;
+
+	if (count <= 2)
+	{
+		spot1 = spot2 = NULL;
+	}
+	else
+		count -= 2;
+
+	selection = rand() % count;
+
+	spot = NULL;
+	do
+	{
+		spot = G_Find(spot, FOFS(classname), "random_monster_spot");
+		if (spot == spot1 || spot == spot2)
+			selection++;
+	} while (selection--);
+
+	return spot;
+}
+
+void spawn_round(edict_t* ent)
+{
+	int i;
+	edict_t* monst;
+	spawn_t* s;
+	edict_t* spot = NULL;
+
+	monst = G_Spawn();
+	monst->classname = "monster_berserk";
+	s = findEntity(monst->classname);
+	s->spawn(monst);
+	spot = RandomMonsterSpawn();
+	VectorCopy(spot->s.origin, monst->s.origin);
+	active++;
+
+}
+
+
+
 
 /*
 ===============
@@ -288,7 +411,7 @@ void ED_CallSpawn (edict_t *ent)
 	}
 
 	// check item spawn functions
-	for (i=0,item=itemlist ; i<game.num_items ; i++,item++)
+	/*for (i = 0, item = itemlist; i<game.num_items; i++, item++)
 	{
 		if (!item->classname)
 			continue;
@@ -297,7 +420,7 @@ void ED_CallSpawn (edict_t *ent)
 			SpawnItem (ent, item);
 			return;
 		}
-	}
+	}*/
 
 	// check normal spawn functions
 	for (s=spawns ; s->name ; s++)
@@ -617,6 +740,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	G_FindTeams ();
 
 	PlayerTrail_Init ();
+
 }
 
 

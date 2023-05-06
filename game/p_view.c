@@ -227,68 +227,6 @@ void SV_CalcViewOffset (edict_t *ent)
 	float		delta;
 	vec3_t		v;
 
-
-//===================================
-
-	// base angles
-	angles = ent->client->ps.kick_angles;
-
-	// if dead, fix the angle and don't add any kick
-	if (ent->deadflag)
-	{
-		VectorClear (angles);
-
-		ent->client->ps.viewangles[ROLL] = 40;
-		ent->client->ps.viewangles[PITCH] = -15;
-		ent->client->ps.viewangles[YAW] = ent->client->killer_yaw;
-	}
-	else
-	{
-		// add angles based on weapon kick
-
-		VectorCopy (ent->client->kick_angles, angles);
-
-		// add angles based on damage kick
-
-		ratio = (ent->client->v_dmg_time - level.time) / DAMAGE_TIME;
-		if (ratio < 0)
-		{
-			ratio = 0;
-			ent->client->v_dmg_pitch = 0;
-			ent->client->v_dmg_roll = 0;
-		}
-		angles[PITCH] += ratio * ent->client->v_dmg_pitch;
-		angles[ROLL] += ratio * ent->client->v_dmg_roll;
-
-		// add pitch based on fall kick
-
-		ratio = (ent->client->fall_time - level.time) / FALL_TIME;
-		if (ratio < 0)
-			ratio = 0;
-		angles[PITCH] += ratio * ent->client->fall_value;
-
-		// add angles based on velocity
-
-		delta = DotProduct (ent->velocity, forward);
-		angles[PITCH] += delta*run_pitch->value;
-		
-		delta = DotProduct (ent->velocity, right);
-		angles[ROLL] += delta*run_roll->value;
-
-		// add angles based on bob
-
-		delta = bobfracsin * bob_pitch->value * xyspeed;
-		if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
-			delta *= 6;		// crouching
-		angles[PITCH] += delta;
-		delta = bobfracsin * bob_roll->value * xyspeed;
-		if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
-			delta *= 6;		// crouching
-		if (bobcycle & 1)
-			delta = -delta;
-		angles[ROLL] += delta;
-	}
-
 //===================================
 
 	// base origin
@@ -320,22 +258,42 @@ void SV_CalcViewOffset (edict_t *ent)
 
 	// absolutely bound offsets
 	// so the view can never be outside the player box
+	// 
+	//====================criipi=======
+	if (!ent->client->camflag)
+	{
+		if (v[0] < -14)
+			v[0] = -14;
+		else if (v[0] > 14)
+			v[0] = 14;
+		if (v[1] < -14)
+			v[1] = -14;
+		else if (v[1] > 14)
+			v[1] = 14;
+		if (v[2] < -22)
+			v[2] = -22;
+		else if (v[2] > 30)
+			v[2] = 30;
+	}
+	else
+	{
+		VectorSet(v, 0, 0, 0);
+		if (ent->client->cam != NULL)
+		{
+			ent->client->ps.pmove.origin[0] = ent->client->cam->s.origin[0] * 8;
+			ent->client->ps.pmove.origin[1] = ent->client->cam->s.origin[1] * 8;
+			ent->client->ps.pmove.origin[2] = ent->client->cam->s.origin[2] * 10;
+		}
+	}
 
-	if (v[0] < -14)
-		v[0] = -14;
-	else if (v[0] > 14)
-		v[0] = 14;
-	if (v[1] < -14)
-		v[1] = -14;
-	else if (v[1] > 14)
-		v[1] = 14;
-	if (v[2] < -22)
-		v[2] = -22;
-	else if (v[2] > 30)
-		v[2] = 30;
-
+	
 	VectorCopy (v, ent->client->ps.viewoffset);
-}
+/*
+	gi.cprintf(ent, PRINT_HIGH, "ps.viewangles:   %f      %f       %f\n", ent->client->ps.viewangles[0], ent->client->ps.viewangles[1], ent->client->ps.viewangles[2]);
+	gi.cprintf(ent, PRINT_HIGH, "ps.viewoffset:   %f      %f       %f\n", ent->client->ps.viewoffset[0], ent->client->ps.viewoffset[1], ent->client->ps.viewoffset[2]);
+	gi.cprintf(ent, PRINT_HIGH, "v_angle:   %f      %f       %f\n", ent->client->v_angle[0], ent->client->v_angle[1], ent->client->v_angle[2]);
+	*/
+	}
 
 /*
 ==============
@@ -425,7 +383,12 @@ void SV_CalcBlend (edict_t *ent)
 		ent->client->ps.blend[2] = ent->client->ps.blend[3] = 0;
 
 	// add for contents
-	VectorAdd (ent->s.origin, ent->client->ps.viewoffset, vieworg);
+	//================criipi===========
+	//top-down cam
+	if(ent->client->camflag)
+		VectorCopy(ent->client->cam->s.origin, vieworg);
+	else
+		VectorAdd (ent->s.origin, ent->client->ps.viewoffset, vieworg);
 	contents = gi.pointcontents (vieworg);
 	if (contents & (CONTENTS_LAVA|CONTENTS_SLIME|CONTENTS_WATER) )
 		ent->client->ps.rdflags |= RDF_UNDERWATER;
@@ -1083,5 +1046,10 @@ void ClientEndServerFrame (edict_t *ent)
 		DeathmatchScoreboardMessage (ent, ent->enemy);
 		gi.unicast (ent, false);
 	}
+
+	//================criipi===========
+	//top-down cam
+	if (ent->client->camflag == 1)
+		PlayerView(ent);
 }
 

@@ -907,7 +907,7 @@ void	SelectSpawnPoint (edict_t *ent, vec3_t origin, vec3_t angles)
 		}
 	}
 
-	VectorCopy (spot->s.origin, origin);
+	VectorSet (origin, -249.875, 528.12, -103.875);
 	origin[2] += 9;
 	VectorCopy (spot->s.angles, angles);
 }
@@ -1179,6 +1179,13 @@ void PutClientInServer (edict_t *ent)
 	ent->watertype = 0;
 	ent->flags &= ~FL_NO_KNOCKBACK;
 	ent->svflags &= ~SVF_DEADMONSTER;
+	
+	//================criipi===========
+	//top-down cam
+	ent->svflags &= ~SVF_NOCLIENT;
+	ent->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
+	client->next_drop = 20;
+	
 
 	VectorCopy (mins, ent->mins);
 	VectorCopy (maxs, ent->maxs);
@@ -1226,8 +1233,8 @@ void PutClientInServer (edict_t *ent)
 	ent->s.angles[PITCH] = 0;
 	ent->s.angles[YAW] = spawn_angles[YAW];
 	ent->s.angles[ROLL] = 0;
-	VectorCopy (ent->s.angles, client->ps.viewangles);
-	VectorCopy (ent->s.angles, client->v_angle);
+	VectorSet(client->ps.viewangles, 89, ent->s.angles[YAW], 0);
+	VectorSet(client->v_angle, 89, ent->s.angles[YAW], 0);
 
 	// spawn a spectator
 	if (client->pers.spectator) {
@@ -1253,6 +1260,16 @@ void PutClientInServer (edict_t *ent)
 	// force the current weapon up
 	client->newweapon = client->pers.weapon;
 	ChangeWeapon (ent);
+
+	rond = 1;
+	num_monsters = 8;
+	old_num = num_monsters;
+	spawn_time = 5;
+	client->nuke = 3;
+	client->teleport = 3;
+	upgraded = 0;
+	
+
 }
 
 /*
@@ -1344,9 +1361,19 @@ void ClientBegin (edict_t *ent)
 			gi.bprintf (PRINT_HIGH, "%s entered the game\n", ent->client->pers.netname);
 		}
 	}
+	
+	//==========criipi=======
+	Cmd_topdownCam(ent);
+
 
 	// make sure all view stuff is valid
 	ClientEndServerFrame (ent);
+
+	spawn_round(ent);
+	active = 1;
+	changeofround = 0;
+	Cmd_Round_f(ent);
+
 }
 
 /*
@@ -1559,6 +1586,33 @@ void PrintPmove (pmove_t *pm)
 	Com_Printf ("sv %3i:%i %i\n", pm->cmd.impulse, c1, c2);
 }
 
+void LootSpawn(edict_t* ent)
+{
+	gitem_t* it;
+	edict_t* it_ent;
+	edict_t* spot = NULL;
+
+	it = itemlist + ((rand() % 17) + 1);
+	/*if (Q_strncasecmp(it->classname, "weapon_", 7))
+	{
+		client->next_drop = level.time + 2;
+		return;
+	}*/
+
+	if (!it->pickup)
+	{
+		ent->client->next_drop = level.time + 2;
+		return;
+	}
+
+	it_ent = G_Spawn();
+	it_ent->classname = it->classname;
+	SpawnItem(it_ent, it);
+	spot = RandomLootDrop();
+	VectorCopy(spot->s.origin, it_ent->s.origin);
+	ent->client->next_drop = level.time + (rand() % 30) + 1;
+}
+
 /*
 ==============
 ClientThink
@@ -1586,6 +1640,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			level.exitintermission = true;
 		return;
 	}
+
+	//================criipi===========
+	//top-down cam
+	if (client->camflag)
+		ent->client->ps.pmove.pm_flags |= PMF_NO_PREDICTION;
+	else
+		ent->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
+
 
 	pm_passent = ent;
 
@@ -1654,10 +1716,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
 			PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
 		}
-
 		ent->viewheight = pm.viewheight;
-		ent->waterlevel = pm.waterlevel;
-		ent->watertype = pm.watertype;
+		ent->waterlevel = 0;
+		ent->watertype = 0;
 		ent->groundentity = pm.groundentity;
 		if (pm.groundentity)
 			ent->groundentity_linkcount = pm.groundentity->linkcount;
@@ -1670,10 +1731,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		}
 		else
 		{
-			VectorCopy (pm.viewangles, client->v_angle);
-			VectorCopy (pm.viewangles, client->ps.viewangles);
+			//================criipi===========
+			//top-down cam
+			VectorSet (client->v_angle, 0, pm.viewangles[1], 0 );
+			VectorSet (ent->s.angles, 0, pm.viewangles[1], 0 );
 		}
 
+		
 		gi.linkentity (ent);
 
 		if (ent->movetype != MOVETYPE_NOCLIP)
@@ -1741,6 +1805,48 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 	}
+
+
+	//========criipi=======
+	//checks for next time to drop item
+	if (client->next_drop < level.time)
+	{
+		LootSpawn(ent);
+	}
+
+	if (spawn_time == level.time && changeofround)
+	{ 
+		changeofround = 0;
+		Cmd_Round_f(ent);
+	}
+
+	if (num_monsters > 0 && spawn_time < level.time && active < 16)
+	{
+		spawn_round(ent);
+		num_monsters--;
+		spawn_time = level.time + 1;
+	}
+	
+
+	if (num_monsters <= 0 && active <= 0)
+	{
+		changeofround = 1;
+		rond++;
+		Cmd_Round_f(ent);
+		spawn_time = level.time + 5;
+		num_monsters = old_num + 4;
+		old_num = num_monsters;
+		Mhealth += 2;
+	}
+
+	if (upgraded && ent->client->upgradedtime < level.time)
+	{
+		upgraded = 0;
+	}
+		
+	//gi.cprintf(ent, PRINT_HIGH, "origin:   %f      %f       %f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+	//gi.cprintf(ent, PRINT_HIGH, "upgrader:   %i\n", upgraded);
+
 }
 
 

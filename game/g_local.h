@@ -601,6 +601,14 @@ extern	gitem_t	itemlist[];
 //
 void Cmd_Help_f (edict_t *ent);
 void Cmd_Score_f (edict_t *ent);
+void Cmd_Round_f (edict_t *ent);
+
+//cam
+void Cmd_topdownCam(edict_t* ent);
+void PlayerView(edict_t* ent);
+
+
+
 
 //
 // g_items.c
@@ -892,6 +900,8 @@ struct gclient_s
 	qboolean	showinventory;		// set layout stat
 	qboolean	showhelp;
 	qboolean	showhelpicon;
+	//=======criipi====
+	qboolean	help;
 
 	int			ammo_index;
 
@@ -959,6 +969,23 @@ struct gclient_s
 
 	edict_t		*chase_target;		// player we are chasing
 	qboolean	update_chase;		// need to update chase info?
+
+	//===============criipi============
+	//======Cam==========
+	int camflag;
+	edict_t* cam;
+	edict_t* playerModelv;
+
+	//========Loot Drops=======
+	int   next_drop;
+	int	  drop;
+	char* currentgunclassname;
+
+	//=========Abilities=======
+	int nuke;
+	int teleport;
+	int upgradedtime;
+
 };
 
 
@@ -1111,3 +1138,26 @@ struct edict_s
 	monsterinfo_t	monsterinfo;
 };
 
+//===========criipi==========
+edict_t* RandomLootDrop(void);
+void Drop_Weapon(edict_t* ent, gitem_t* item);
+int gunflag;
+
+int rond;
+int num_monsters;
+int old_num;
+int spawn_time;
+int active;
+void spawn_round(edict_t* ent);
+int changeofround;
+int Mhealth;
+int upgraded;
+int regen;
+
+
+void Spawn_Chicken(edict_t* powerup, edict_t* ent);
+void Spawn_Monkey(vec3_t origin, edict_t* ent);
+void barrel_explode(edict_t* self);
+void func_explosive_explode(edict_t* self, edict_t* inflictor, edict_t* attacker, int damage, vec3_t point);
+
+#define UPGRADED 2

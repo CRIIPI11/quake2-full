@@ -49,7 +49,7 @@ static int	power_shield_index;
 #define HEALTH_IGNORE_MAX	1
 #define HEALTH_TIMED		2
 
-void Use_Quad (edict_t *ent, gitem_t *item);
+void Use_Nuke(edict_t *ent, gitem_t *item);
 static int	quad_drop_timeout_hack;
 
 //======================================================================
@@ -173,9 +173,9 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 	{
 		if (!(ent->spawnflags & DROPPED_ITEM) )
 			SetRespawn (ent, ent->item->quantity);
-		if (((int)dmflags->value & DF_INSTANT_ITEMS) || ((ent->item->use == Use_Quad) && (ent->spawnflags & DROPPED_PLAYER_ITEM)))
+		if (((int)dmflags->value & DF_INSTANT_ITEMS) || ((ent->item->use == Use_Nuke) && (ent->spawnflags & DROPPED_PLAYER_ITEM)))
 		{
-			if ((ent->item->use == Use_Quad) && (ent->spawnflags & DROPPED_PLAYER_ITEM))
+			if ((ent->item->use == Use_Nuke) && (ent->spawnflags & DROPPED_PLAYER_ITEM))
 				quad_drop_timeout_hack = (ent->nextthink - level.time) / FRAMETIME;
 			ent->item->use (other, ent->item);
 		}
@@ -187,8 +187,6 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 void Drop_General (edict_t *ent, gitem_t *item)
 {
 	Drop_Item (ent, item);
-	ent->client->pers.inventory[ITEM_INDEX(item)]--;
-	ValidateSelectedItem (ent);
 }
 
 
@@ -334,61 +332,117 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 	return true;
 }
 
-//======================================================================
+//====criipi============================================================
 
-void Use_Quad (edict_t *ent, gitem_t *item)
+void Use_Nuke (edict_t *ent, gitem_t *item)
 {
-	int		timeout;
-
-	ent->client->pers.inventory[ITEM_INDEX(item)]--;
-	ValidateSelectedItem (ent);
-
-	if (quad_drop_timeout_hack)
+	edict_t* monster;
+	if (ent->client->nuke>0)
 	{
-		timeout = quad_drop_timeout_hack;
-		quad_drop_timeout_hack = 0;
+		monster = NULL;
+		while ((monster = G_Find(monster, FOFS(classname), "monster_berserk")) != NULL)
+		{
+			monster->die(monster, NULL, ent, NULL, NULL);
+		}
+
+		ent->client->nuke--;
+		if (ent->client->nuke < 0)
+		{
+			ent->client->nuke = 0;
+		}
 	}
 	else
+		gi.cprintf(ent, PRINT_HIGH, "Out of Nukes\n");
+
+}
+
+//====criipi============================================================
+float far2(edict_t* spot, edict_t* ent)
+{
+
+	float	bestplayerdistance;
+	vec3_t	v;
+	int		n;
+	float	playerdistance;
+
+
+	bestplayerdistance = 9999999;
+
+	VectorSubtract(spot->s.origin, ent->s.origin, v);
+	playerdistance = VectorLength(v);
+
+	if (playerdistance < bestplayerdistance)
+		bestplayerdistance = playerdistance;
+	
+	return bestplayerdistance;
+}
+
+//====criipi============================================================
+edict_t* RandomTeleport(edict_t* ent)
+{
+	edict_t* bestspot;
+	float	bestdistance, bestplayerdistance;
+	edict_t* spot;
+
+
+	spot = NULL;
+	bestspot = NULL;
+	bestdistance = 0;
+	while ((spot = G_Find(spot, FOFS(classname), "random_teleport_spot")) != NULL)
 	{
-		timeout = 300;
+		bestplayerdistance = far2(spot, ent);
+
+		if (bestplayerdistance > bestdistance)
+		{
+			bestspot = spot;
+			bestdistance = bestplayerdistance;
+		}
 	}
 
-	if (ent->client->quad_framenum > level.framenum)
-		ent->client->quad_framenum += timeout;
-	else
-		ent->client->quad_framenum = level.framenum + timeout;
+	if (bestspot)
+	{
+		return bestspot;
+	}
 
-	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
+	spot = G_Find(NULL, FOFS(classname), "random_teleport_spot");
+
+	return spot;
+}
+
+//====criipi============================================================
+void Use_Teleport(edict_t* ent, gitem_t* item)
+{
+	edict_t* spot;
+
+	if(ent->client->teleport > 0)
+	{ 
+		spot = RandomTeleport(ent);
+		VectorCopy(spot->s.origin, ent->s.origin);
+
+		ent->client->teleport--;
+		if (ent->client->teleport <0)
+		{
+			ent->client->teleport = 0;
+		}
+	}
+	else
+		gi.cprintf(ent, PRINT_HIGH, "Out of Teleports\n");
+
 }
 
 //======================================================================
 
-void Use_Breather (edict_t *ent, gitem_t *item)
+void Use_Breather(edict_t* ent, gitem_t* item)
 {
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
-	ValidateSelectedItem (ent);
+	ValidateSelectedItem(ent);
 
 	if (ent->client->breather_framenum > level.framenum)
 		ent->client->breather_framenum += 300;
 	else
 		ent->client->breather_framenum = level.framenum + 300;
 
-//	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
-}
-
-//======================================================================
-
-void Use_Envirosuit (edict_t *ent, gitem_t *item)
-{
-	ent->client->pers.inventory[ITEM_INDEX(item)]--;
-	ValidateSelectedItem (ent);
-
-	if (ent->client->enviro_framenum > level.framenum)
-		ent->client->enviro_framenum += 300;
-	else
-		ent->client->enviro_framenum = level.framenum + 300;
-
-//	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
+	//	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
 }
 
 //======================================================================
@@ -604,84 +658,61 @@ int ArmorIndex (edict_t *ent)
 	return 0;
 }
 
-qboolean Pickup_Armor (edict_t *ent, edict_t *other)
+//================criipi======================
+//======Pick up Perks and abilities=============
+
+qboolean Pickup_Nukes(edict_t *ent, edict_t *other)
 {
-	int				old_armor_index;
-	gitem_armor_t	*oldinfo;
-	gitem_armor_t	*newinfo;
-	int				newcount;
-	float			salvage;
-	int				salvagecount;
-
-	// get info on new armor
-	newinfo = (gitem_armor_t *)ent->item->info;
-
-	old_armor_index = ArmorIndex (other);
-
-	// handle armor shards specially
-	if (ent->item->tag == ARMOR_SHARD)
-	{
-		if (!old_armor_index)
-			other->client->pers.inventory[jacket_armor_index] = 2;
-		else
-			other->client->pers.inventory[old_armor_index] += 2;
-	}
-
-	// if player has no armor, just use it
-	else if (!old_armor_index)
-	{
-		other->client->pers.inventory[ITEM_INDEX(ent->item)] = newinfo->base_count;
-	}
-
-	// use the better armor
-	else
-	{
-		// get info on old armor
-		if (old_armor_index == jacket_armor_index)
-			oldinfo = &jacketarmor_info;
-		else if (old_armor_index == combat_armor_index)
-			oldinfo = &combatarmor_info;
-		else // (old_armor_index == body_armor_index)
-			oldinfo = &bodyarmor_info;
-
-		if (newinfo->normal_protection > oldinfo->normal_protection)
-		{
-			// calc new armor values
-			salvage = oldinfo->normal_protection / newinfo->normal_protection;
-			salvagecount = salvage * other->client->pers.inventory[old_armor_index];
-			newcount = newinfo->base_count + salvagecount;
-			if (newcount > newinfo->max_count)
-				newcount = newinfo->max_count;
-
-			// zero count of old armor so it goes away
-			other->client->pers.inventory[old_armor_index] = 0;
-
-			// change armor to new item with computed value
-			other->client->pers.inventory[ITEM_INDEX(ent->item)] = newcount;
-		}
-		else
-		{
-			// calc new armor values
-			salvage = newinfo->normal_protection / oldinfo->normal_protection;
-			salvagecount = salvage * newinfo->base_count;
-			newcount = other->client->pers.inventory[old_armor_index] + salvagecount;
-			if (newcount > oldinfo->max_count)
-				newcount = oldinfo->max_count;
-
-			// if we're already maxed out then we don't need the new armor
-			if (other->client->pers.inventory[old_armor_index] >= newcount)
-				return false;
-
-			// update current armor value
-			other->client->pers.inventory[old_armor_index] = newcount;
-		}
-	}
-
-	if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
-		SetRespawn (ent, 20);
+	other->client->nuke++;
 
 	return true;
 }
+
+qboolean Pickup_Teleport(edict_t* ent, edict_t* other)
+{
+	other->client->teleport++;
+
+	return true;
+}
+
+qboolean Pickup_Armor(edict_t* ent, edict_t* other)
+{
+	return true;
+}
+
+qboolean Pickup_health(edict_t* ent, edict_t* other)
+{
+	other->health += 30;
+	if (other->health > other->max_health)
+		other->health = other->max_health;
+
+	return true;
+}
+
+qboolean Pickup_Upgrader(edict_t* ent, edict_t* other)
+{
+	upgraded = 1;
+	if (other->client->upgradedtime < level.time)
+		other->client->upgradedtime = level.time + 15;
+	else
+		other->client->upgradedtime += 15;
+
+
+	return true;
+}
+
+qboolean Pickup_Chicken(edict_t* ent, edict_t* other)
+{
+	Spawn_Chicken(ent, other);
+	return true;
+}
+
+qboolean Pickup_Monkey(edict_t* ent, edict_t* other)
+{
+	Spawn_Monkey(ent->s.origin, other);
+	return true;
+}
+
 
 //======================================================================
 
@@ -910,6 +941,37 @@ void Use_Item (edict_t *ent, edict_t *other, edict_t *activator)
 
 //======================================================================
 
+//=========criipi
+//===============random spawn spot=======
+edict_t* RandomLootDrop(void)
+{
+	edict_t* spot;
+	int		count = 0;
+	int		selection;
+
+	spot = NULL;
+
+	while ((spot = G_Find(spot, FOFS(classname), "random_spot")) != NULL)
+	{
+		count++;
+	}
+
+	if (!count)
+		return NULL;
+
+	count -= 2;
+
+	selection = rand() % count;
+
+	spot = NULL;
+	do
+	{
+		spot = G_Find(spot, FOFS(classname), "random_spot");
+	} while (selection--);
+
+	return spot;
+}
+
 /*
 ================
 droptofloor
@@ -938,13 +1000,7 @@ void droptofloor (edict_t *ent)
 	VectorAdd (ent->s.origin, v, dest);
 
 	tr = gi.trace (ent->s.origin, ent->mins, ent->maxs, dest, ent, MASK_SOLID);
-	if (tr.startsolid)
-	{
-		gi.dprintf ("droptofloor: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
-		G_FreeEdict (ent);
-		return;
-	}
-
+	
 	VectorCopy (tr.endpos, ent->s.origin);
 
 	if (ent->team)
@@ -977,6 +1033,10 @@ void droptofloor (edict_t *ent)
 		ent->use = Use_Item;
 	}
 
+	//====criipi====
+	ent->nextthink = level.time + 10;
+	ent->think = G_FreeEdict;
+	
 	gi.linkentity (ent);
 }
 
@@ -1127,6 +1187,8 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 	ent->s.renderfx = RF_GLOW;
 	if (ent->model)
 		gi.modelindex (ent->model);
+	
+
 }
 
 //======================================================================
@@ -1145,15 +1207,15 @@ gitem_t	itemlist[] =
 */
 	{
 		"item_armor_body", 
-		Pickup_Armor,
+		Pickup_Nukes,
 		NULL,
-		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar1_pkup.wav",
-		"models/items/armor/body/tris.md2", EF_ROTATE,
+		"models/items/invulner/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"i_bodyarmor",
-/* pickup */	"Body Armor",
+/* pickup */	"Nukes",
 /* width */		3,
 		0,
 		NULL,
@@ -1167,109 +1229,109 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_combat (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_combat", 
-		Pickup_Armor,
+	"item_armor_combat",
+		Pickup_Teleport,
 		NULL,
-		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar1_pkup.wav",
-		"models/items/armor/combat/tris.md2", EF_ROTATE,
+		"models/items/quaddama/tris.md2", EF_ROTATE,
 		NULL,
-/* icon */		"i_combatarmor",
-/* pickup */	"Combat Armor",
-/* width */		3,
+		/* icon */		"i_combatarmor",
+		/* pickup */	"Teleport",
+		/* width */		3,
 		0,
 		NULL,
 		IT_ARMOR,
 		0,
-		&combatarmor_info,
+		& combatarmor_info,
 		ARMOR_COMBAT,
-/* precache */ ""
+		/* precache */ ""
 	},
 
-/*QUAKED item_armor_jacket (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
+		/*QUAKED item_armor_jacket (.3 .3 1) (-16 -16 -16) (16 16 16)
+		*/
 	{
-		"item_armor_jacket", 
-		Pickup_Armor,
+		"item_armor_jacket",
+		Pickup_Chicken,
 		NULL,
-		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar1_pkup.wav",
-		"models/items/armor/jacket/tris.md2", EF_ROTATE,
+		"models/monsters/soldier/tris.md2", EF_ROTATE,
 		NULL,
-/* icon */		"i_jacketarmor",
-/* pickup */	"Jacket Armor",
-/* width */		3,
-		0,
-		NULL,
-		IT_ARMOR,
-		0,
-		&jacketarmor_info,
-		ARMOR_JACKET,
-/* precache */ ""
+		/* icon */		"i_jacketarmor",
+		/* pickup */	"Chicken",
+		/* width */		3,
+				0,
+				NULL,
+				IT_ARMOR,
+				0,
+				&jacketarmor_info,
+				ARMOR_JACKET,
+				/* precache */ ""
 	},
 
-/*QUAKED item_armor_shard (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
+		/*QUAKED item_armor_shard (.3 .3 1) (-16 -16 -16) (16 16 16)
+		*/
 	{
-		"item_armor_shard", 
-		Pickup_Armor,
+		"item_armor_shard",
+		Pickup_Monkey,
 		NULL,
-		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar2_pkup.wav",
-		"models/items/armor/shard/tris.md2", EF_ROTATE,
+		"models/items/keys/target/tris.md2", EF_ROTATE,
 		NULL,
-/* icon */		"i_jacketarmor",
-/* pickup */	"Armor Shard",
-/* width */		3,
-		0,
-		NULL,
-		IT_ARMOR,
-		0,
-		NULL,
-		ARMOR_SHARD,
-/* precache */ ""
+		/* icon */		"i_jacketarmor",
+		/* pickup */	"Monkey",
+		/* width */		3,
+				0,
+				NULL,
+				IT_ARMOR,
+				0,
+				NULL,
+				ARMOR_SHARD,
+				/* precache */ ""
 	},
 
 
-/*QUAKED item_power_screen (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
+		/*QUAKED item_power_screen (.3 .3 1) (-16 -16 -16) (16 16 16)
+		*/
 	{
-		"item_power_screen", 
-		Pickup_PowerArmor,
-		Use_PowerArmor,
-		Drop_PowerArmor,
+		"item_power_screen",
+		Pickup_Upgrader,
+		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar3_pkup.wav",
-		"models/items/armor/screen/tris.md2", EF_ROTATE,
+		"models/items/keys/spinner/tris.md2", EF_ROTATE,
 		NULL,
-/* icon */		"i_powerscreen",
-/* pickup */	"Power Screen",
-/* width */		0,
-		60,
-		NULL,
-		IT_ARMOR,
-		0,
-		NULL,
-		0,
-/* precache */ ""
+		/* icon */		"i_powerscreen",
+		/* pickup */	"Upgrader",
+		/* width */		0,
+				60,
+				NULL,
+				IT_ARMOR,
+				0,
+				NULL,
+				0,
+				/* precache */ ""
 	},
 
-/*QUAKED item_power_shield (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
+		/*QUAKED item_power_shield (.3 .3 1) (-16 -16 -16) (16 16 16)
+		*/
 	{
 		"item_power_shield",
-		Pickup_PowerArmor,
-		Use_PowerArmor,
-		Drop_PowerArmor,
+		Pickup_health,
+		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar3_pkup.wav",
-		"models/items/armor/shield/tris.md2", EF_ROTATE,
+		"models/items/healing/large/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"i_powershield",
-/* pickup */	"Power Shield",
+/* pickup */	"Health",
 /* width */		0,
 		60,
 		NULL,
@@ -1405,7 +1467,7 @@ always owned, never in the world
 */
 	{
 		"ammo_grenades",
-		Pickup_Ammo,
+		NULL,
 		Use_Weapon,
 		Drop_Ammo,
 		Weapon_Grenade,
@@ -1520,7 +1582,7 @@ always owned, never in the world
 */
 	{
 		"weapon_bfg",
-		Pickup_Weapon,
+		NULL,
 		Use_Weapon,
 		Drop_Weapon,
 		Weapon_BFG,
@@ -1667,7 +1729,7 @@ always owned, never in the world
 	{
 		"item_quad", 
 		Pickup_Powerup,
-		Use_Quad,
+		Use_Nuke,
 		Drop_General,
 		NULL,
 		"items/pkup.wav",
@@ -1759,7 +1821,7 @@ always owned, never in the world
 	{
 		"item_enviro",
 		Pickup_Powerup,
-		Use_Envirosuit,
+		Use_Teleport,
 		Drop_General,
 		NULL,
 		"items/pkup.wav",
@@ -2208,9 +2270,9 @@ void SetItemNames (void)
 		gi.configstring (CS_ITEMS+i, it->pickup_name);
 	}
 
-	jacket_armor_index = ITEM_INDEX(FindItem("Jacket Armor"));
-	combat_armor_index = ITEM_INDEX(FindItem("Combat Armor"));
-	body_armor_index   = ITEM_INDEX(FindItem("Body Armor"));
-	power_screen_index = ITEM_INDEX(FindItem("Power Screen"));
-	power_shield_index = ITEM_INDEX(FindItem("Power Shield"));
+	jacket_armor_index = ITEM_INDEX(FindItem("Chicken"));
+	combat_armor_index = ITEM_INDEX(FindItem("Teleport"));
+	body_armor_index   = ITEM_INDEX(FindItem("Nukes"));
+	power_screen_index = ITEM_INDEX(FindItem("Upgrader"));
+	power_shield_index = ITEM_INDEX(FindItem("Health"));
 }

@@ -266,31 +266,6 @@ void DeathmatchScoreboard (edict_t *ent)
 }
 
 
-/*
-==================
-Cmd_Score_f
-
-Display the scoreboard
-==================
-*/
-void Cmd_Score_f (edict_t *ent)
-{
-	ent->client->showinventory = false;
-	ent->client->showhelp = false;
-
-	if (!deathmatch->value && !coop->value)
-		return;
-
-	if (ent->client->showscores)
-	{
-		ent->client->showscores = false;
-		return;
-	}
-
-	ent->client->showscores = true;
-	DeathmatchScoreboard (ent);
-}
-
 
 /*
 ==================
@@ -314,27 +289,72 @@ void HelpComputer (edict_t *ent)
 		sk = "hard+";
 
 	// send the layout
-	Com_sprintf (string, sizeof(string),
+	Com_sprintf(string, sizeof(string),
 		"xv 32 yv 8 picn help "			// background
-		"xv 202 yv 12 string2 \"%s\" "		// skill
-		"xv 0 yv 24 cstring2 \"%s\" "		// level name
-		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
-		"xv 0 yv 110 cstring2 \"%s\" "		// help 2
-		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
-		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ", 
-		sk,
-		level.level_name,
-		game.helpmessage1,
-		game.helpmessage2,
-		level.killed_monsters, level.total_monsters, 
-		level.found_goals, level.total_goals,
-		level.found_secrets, level.total_secrets);
+		"xv 0 yv 24 cstring2 \"Dead Ops Arcade\" "		// level name
+		"xv 0 yv 54 cstring2 \"Survive infinite amount of\" "		// help 1
+		"xv 0 yv 64 cstring2 \"zombies rounds where your\" "		// help 1
+		"xv 0 yv 74 cstring2 \"only ally is your ability to run.\" "		// help 1
+		"xv 0 yv 106 cstring2 \"Loot drops spawn ocasionally\" "		// help 1
+		"xv 0 yv 116 cstring2 \"with limited time weapons/abilities\" "		// help 1
+		"xv 0 yv 126 cstring2 \"2 of them you get to keep\" "		// help 1
+		"xv 0 yv 136 cstring2 \"used them wisely!\" "		// help 1
+		"xv 50 yv 164 string2 \"Zombies   Round    \" "
+		"xv 50 yv 172 string2 \"   %i		    	 %i       \" ",
+		old_num, rond);
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
 	gi.unicast (ent, true);
 }
 
+void ShowRound(edict_t* ent)
+{
+	char	string[1024];
+	
+	// send the layout
+	if (changeofround)
+	{
+		Com_sprintf(string, sizeof(string),
+			"xv -0 yv 30 cstring2 \"Round %i\" ",		// level name
+			rond);
+	}
+	else
+	{
+		Com_sprintf(string, sizeof(string),
+			"xv -450 yv 450 cstring2 \"Round %i\" ",		// level name
+			rond);
+	}
+
+	gi.WriteByte(svc_layout);
+	gi.WriteString(string);
+	gi.unicast(ent, true);
+}
+
+/*
+==================
+Cmd_Score_f
+
+Display the scoreboard
+==================
+*/
+void Cmd_Score_f(edict_t* ent)
+{
+	ent->client->showinventory = false;
+	ent->client->showhelp = false;
+
+	if (!deathmatch->value && !coop->value)
+		return;
+
+	if (ent->client->showscores)
+	{
+		ent->client->showscores = false;
+		return;
+	}
+
+	ent->client->showscores = true;
+	ShowRound(ent);
+}
 
 /*
 ==================
@@ -345,25 +365,36 @@ Display the current help message
 */
 void Cmd_Help_f (edict_t *ent)
 {
-	// this is for backwards compatability
-	if (deathmatch->value)
-	{
-		Cmd_Score_f (ent);
-		return;
-	}
 
 	ent->client->showinventory = false;
 	ent->client->showscores = false;
 
-	if (ent->client->showhelp && (ent->client->pers.game_helpchanged == game.helpchanged))
+	if (ent->client->help)
 	{
-		ent->client->showhelp = false;
+		ent->client->help = false;
+		ShowRound(ent);
 		return;
 	}
 
 	ent->client->showhelp = true;
+	ent->client->help = true;
 	ent->client->pers.helpchanged = 0;
 	HelpComputer (ent);
+}
+
+//=============criipi==========
+//round displayer
+
+void Cmd_Round_f (edict_t *ent)
+{
+
+	ent->client->showinventory = false;
+	ent->client->showscores = false;
+	ent->client->help = false;
+
+	ent->client->showhelp = true;
+	ent->client->pers.helpchanged = 0;
+	ShowRound(ent);
 }
 
 
@@ -389,17 +420,10 @@ void G_SetStats (edict_t *ent)
 	//
 	// ammo
 	//
-	if (!ent->client->ammo_index /* || !ent->client->pers.inventory[ent->client->ammo_index] */)
-	{
+	
 		ent->client->ps.stats[STAT_AMMO_ICON] = 0;
 		ent->client->ps.stats[STAT_AMMO] = 0;
-	}
-	else
-	{
-		item = &itemlist[ent->client->ammo_index];
-		ent->client->ps.stats[STAT_AMMO_ICON] = gi.imageindex (item->icon);
-		ent->client->ps.stats[STAT_AMMO] = ent->client->pers.inventory[ent->client->ammo_index];
-	}
+	
 	
 	//
 	// armor
@@ -416,23 +440,10 @@ void G_SetStats (edict_t *ent)
 		}
 	}
 
-	index = ArmorIndex (ent);
-	if (power_armor_type && (!index || (level.framenum & 8) ) )
-	{	// flash between power armor and other armor icon
-		ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex ("i_powershield");
-		ent->client->ps.stats[STAT_ARMOR] = cells;
-	}
-	else if (index)
-	{
-		item = GetItemByIndex (index);
-		ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex (item->icon);
-		ent->client->ps.stats[STAT_ARMOR] = ent->client->pers.inventory[index];
-	}
-	else
-	{
-		ent->client->ps.stats[STAT_ARMOR_ICON] = 0;
-		ent->client->ps.stats[STAT_ARMOR] = 0;
-	}
+	
+	ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex("p_quad");
+	ent->client->ps.stats[STAT_ARMOR] = ent->client->teleport;
+	
 
 	//
 	// pickup message
@@ -446,10 +457,10 @@ void G_SetStats (edict_t *ent)
 	//
 	// timers
 	//
-	if (ent->client->quad_framenum > level.framenum)
+	if (true)
 	{
-		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_quad");
-		ent->client->ps.stats[STAT_TIMER] = (ent->client->quad_framenum - level.framenum)/10;
+		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_invulnerability");
+		ent->client->ps.stats[STAT_TIMER] = ent->client->nuke;
 	}
 	else if (ent->client->invincible_framenum > level.framenum)
 	{
@@ -475,12 +486,9 @@ void G_SetStats (edict_t *ent)
 	//
 	// selected item
 	//
-	if (ent->client->pers.selected_item == -1)
-		ent->client->ps.stats[STAT_SELECTED_ICON] = 0;
-	else
-		ent->client->ps.stats[STAT_SELECTED_ICON] = gi.imageindex (itemlist[ent->client->pers.selected_item].icon);
-
-	ent->client->ps.stats[STAT_SELECTED_ITEM] = ent->client->pers.selected_item;
+	
+	ent->client->ps.stats[STAT_SELECTED_ICON] = 0;
+	
 
 	//
 	// layouts
