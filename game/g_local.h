@@ -1152,6 +1152,7 @@ void spawn_round(edict_t* ent);
 int changeofround;
 int Mhealth;
 int upgraded;
+int regen;
 
 
 void Spawn_Chicken(edict_t* powerup, edict_t* ent);

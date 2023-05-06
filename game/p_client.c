@@ -1717,8 +1717,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
 		}
 		ent->viewheight = pm.viewheight;
-		ent->waterlevel = pm.waterlevel;
-		ent->watertype = pm.watertype;
+		ent->waterlevel = 0;
+		ent->watertype = 0;
 		ent->groundentity = pm.groundentity;
 		if (pm.groundentity)
 			ent->groundentity_linkcount = pm.groundentity->linkcount;
@@ -1845,7 +1845,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 		
 	//gi.cprintf(ent, PRINT_HIGH, "origin:   %f      %f       %f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
-	gi.cprintf(ent, PRINT_HIGH, "upgrader:   %i\n", upgraded);
+	//gi.cprintf(ent, PRINT_HIGH, "upgrader:   %i\n", upgraded);
 
 }
 

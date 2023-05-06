@@ -21,7 +21,7 @@ void sound(edict_t* self)
 		gi.linkentity(monster);
 	}
 	
-	//gi.sound(self, CHAN_VOICE, gi.soundindex("plats/pt1_end.wav"), 1, ATTN_NORM, 0);
+	gi.sound(self, CHAN_VOICE, gi.soundindex("plats/pt1_end.wav"), 1, ATTN_NORM, 0);
 }
 
 void Spawn_Monkey(vec3_t origin, edict_t* ent) {
@@ -34,7 +34,7 @@ void Spawn_Monkey(vec3_t origin, edict_t* ent) {
 	monkey->movetype = MOVETYPE_NONE;
 	//monkey->prethink = sound;
 	monkey->classname = "monkeypowerup";
-	monkey->s.modelindex = gi.modelindex("models/monsters/soldier/tris.md2");
+	monkey->s.modelindex = gi.modelindex("models/items/keys/target/tris.md2");
 	monkey->dmg = 100;
 	monkey->prethink = sound;
 	VectorClear(monkey->mins);

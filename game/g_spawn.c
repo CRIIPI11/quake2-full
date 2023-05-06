@@ -284,6 +284,9 @@ spawn_t* findEntity(char* classname)
 	}
 }
 
+//====criipi============================================================
+//Functions to spawn a monster in a round
+
 float far(edict_t* spot)
 {
 	edict_t* monster;

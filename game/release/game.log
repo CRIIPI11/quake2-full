@@ -66,18 +66,19 @@ C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(45,28): 
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(345,41): warning C4047: 'function': 'int' differs in levels of indirection from 'void *'
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(345,37): warning C4024: 'function through pointer': different types for formal and actual parameter 4
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(337,39): warning C4100: 'item': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(364,7): warning C4101: 'n': unreferenced local variable
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(365,7): warning C4101: 'n': unreferenced local variable
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(413,42): warning C4100: 'item': unreferenced formal parameter
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(664,32): warning C4100: 'ent': unreferenced formal parameter
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(671,35): warning C4100: 'ent': unreferenced formal parameter
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(678,46): warning C4100: 'other': unreferenced formal parameter
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(678,32): warning C4100: 'ent': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(684,35): warning C4100: 'ent': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(728,45): warning C4100: 'item': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(784,77): warning C4100: 'surf': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(784,58): warning C4100: 'plane': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(915,55): warning C4100: 'activator': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(915,39): warning C4100: 'other': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(683,33): warning C4100: 'ent': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(692,35): warning C4100: 'ent': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(736,45): warning C4100: 'item': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(792,77): warning C4100: 'surf': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(792,58): warning C4100: 'plane': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(923,55): warning C4100: 'activator': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_items.c(923,39): warning C4100: 'other': unreferenced formal parameter
   g_main.c
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_main.c(148,2): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_main.c(160,2): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
@@ -153,17 +154,17 @@ C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_save.c(690,6): w
   g_spawn.c
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(276,7): warning C4101: 'i': unreferenced local variable
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(275,11): warning C4101: 'item': unreferenced local variable
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(371,27): warning C4100: 'ent': unreferenced formal parameter
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(373,6): warning C4101: 'i': unreferenced local variable
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(402,7): warning C4101: 'i': unreferenced local variable
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(401,11): warning C4101: 'item': unreferenced local variable
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(500,5): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(553,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(663,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(664,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(933,10): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(940,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(374,27): warning C4100: 'ent': unreferenced formal parameter
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(376,6): warning C4101: 'i': unreferenced local variable
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(405,7): warning C4101: 'i': unreferenced local variable
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(404,11): warning C4101: 'item': unreferenced local variable
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(503,5): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(556,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(666,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(667,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(936,10): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(943,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(946,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   g_svcmds.c
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_svcmds.c(244,14): warning C4459: declaration of 'game' hides global declaration
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_local.h(452,22): message : see declaration of 'game'
@@ -245,8 +246,8 @@ C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\m_berserk.c(383,7)
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_utils.c(215): warning C4706: assignment within conditional expression
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_utils.c(232): warning C4706: assignment within conditional expression
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(285): warning C4715: 'findEntity': not all control paths return a value
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(381): warning C4701: potentially uninitialized local variable 's' used
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(381): warning C4703: potentially uninitialized local pointer variable 's' used
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(384): warning C4701: potentially uninitialized local variable 's' used
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_spawn.c(384): warning C4703: potentially uninitialized local pointer variable 's' used
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_func.c(859): warning C4706: assignment within conditional expression
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_combat.c(249): warning C4701: potentially uninitialized local variable 'index' used
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\g_combat.c(209): warning C4701: potentially uninitialized local variable 'power' used
@@ -429,9 +430,9 @@ C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\p_client.c(1442,2)
   p_hud.c
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\p_hud.c(234,11): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\p_hud.c(245,10): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\p_hud.c(461,10): warning C4127: conditional expression is constant
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\p_hud.c(412,8): warning C4101: 'index': unreferenced local variable
-C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\p_hud.c(411,12): warning C4101: 'item': unreferenced local variable
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\p_hud.c(460,10): warning C4127: conditional expression is constant
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\p_hud.c(411,8): warning C4101: 'index': unreferenced local variable
+C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\p_hud.c(410,12): warning C4101: 'item': unreferenced local variable
   p_monkeybomb.c
   p_topcamera.c
 C:\Users\cdml2\School\IT266\Q2Code\Q2 Modify\quake2-full\game\p_topcamera.c(5,25): warning C4101: 'up': unreferenced local variable

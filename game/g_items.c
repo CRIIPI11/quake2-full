@@ -332,7 +332,7 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 	return true;
 }
 
-//======================================================================
+//====criipi============================================================
 
 void Use_Nuke (edict_t *ent, gitem_t *item)
 {
@@ -356,6 +356,7 @@ void Use_Nuke (edict_t *ent, gitem_t *item)
 
 }
 
+//====criipi============================================================
 float far2(edict_t* spot, edict_t* ent)
 {
 
@@ -376,6 +377,7 @@ float far2(edict_t* spot, edict_t* ent)
 	return bestplayerdistance;
 }
 
+//====criipi============================================================
 edict_t* RandomTeleport(edict_t* ent)
 {
 	edict_t* bestspot;
@@ -402,14 +404,12 @@ edict_t* RandomTeleport(edict_t* ent)
 		return bestspot;
 	}
 
-	// if there is a player just spawned on each and every start spot
-	// we have no choice to turn one into a telefrag meltdown
 	spot = G_Find(NULL, FOFS(classname), "random_teleport_spot");
 
 	return spot;
 }
 
-//======================================================================
+//====criipi============================================================
 void Use_Teleport(edict_t* ent, gitem_t* item)
 {
 	edict_t* spot;
@@ -677,6 +677,14 @@ qboolean Pickup_Teleport(edict_t* ent, edict_t* other)
 
 qboolean Pickup_Armor(edict_t* ent, edict_t* other)
 {
+	return true;
+}
+
+qboolean Pickup_health(edict_t* ent, edict_t* other)
+{
+	other->health += 30;
+	if (other->health > other->max_health)
+		other->health = other->max_health;
 
 	return true;
 }
@@ -1026,7 +1034,7 @@ void droptofloor (edict_t *ent)
 	}
 
 	//====criipi====
-	ent->nextthink = level.time + 5;
+	ent->nextthink = level.time + 10;
 	ent->think = G_FreeEdict;
 	
 	gi.linkentity (ent);
@@ -1201,10 +1209,10 @@ gitem_t	itemlist[] =
 		"item_armor_body", 
 		Pickup_Nukes,
 		NULL,
-		NULL,
+		Drop_General,
 		NULL,
 		"misc/ar1_pkup.wav",
-		"models/items/armor/body/tris.md2", EF_ROTATE,
+		"models/items/invulner/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"i_bodyarmor",
 /* pickup */	"Nukes",
@@ -1227,7 +1235,7 @@ gitem_t	itemlist[] =
 		Drop_General,
 		NULL,
 		"misc/ar1_pkup.wav",
-		"models/items/armor/combat/tris.md2", EF_ROTATE,
+		"models/items/quaddama/tris.md2", EF_ROTATE,
 		NULL,
 		/* icon */		"i_combatarmor",
 		/* pickup */	"Teleport",
@@ -1250,7 +1258,7 @@ gitem_t	itemlist[] =
 		Drop_General,
 		NULL,
 		"misc/ar1_pkup.wav",
-		"models/items/armor/jacket/tris.md2", EF_ROTATE,
+		"models/monsters/soldier/tris.md2", EF_ROTATE,
 		NULL,
 		/* icon */		"i_jacketarmor",
 		/* pickup */	"Chicken",
@@ -1273,7 +1281,7 @@ gitem_t	itemlist[] =
 		Drop_General,
 		NULL,
 		"misc/ar2_pkup.wav",
-		"models/items/armor/shard/tris.md2", EF_ROTATE,
+		"models/items/keys/target/tris.md2", EF_ROTATE,
 		NULL,
 		/* icon */		"i_jacketarmor",
 		/* pickup */	"Monkey",
@@ -1297,7 +1305,7 @@ gitem_t	itemlist[] =
 		Drop_General,
 		NULL,
 		"misc/ar3_pkup.wav",
-		"models/items/armor/screen/tris.md2", EF_ROTATE,
+		"models/items/keys/spinner/tris.md2", EF_ROTATE,
 		NULL,
 		/* icon */		"i_powerscreen",
 		/* pickup */	"Upgrader",
@@ -1315,15 +1323,15 @@ gitem_t	itemlist[] =
 		*/
 	{
 		"item_power_shield",
-		Pickup_Armor,
+		Pickup_health,
 		NULL,
 		Drop_General,
 		NULL,
 		"misc/ar3_pkup.wav",
-		"models/items/armor/shield/tris.md2", EF_ROTATE,
+		"models/items/healing/large/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"i_powershield",
-/* pickup */	"Power Shield",
+/* pickup */	"Health",
 /* width */		0,
 		60,
 		NULL,
@@ -1459,7 +1467,7 @@ always owned, never in the world
 */
 	{
 		"ammo_grenades",
-		Pickup_Ammo,
+		NULL,
 		Use_Weapon,
 		Drop_Ammo,
 		Weapon_Grenade,
@@ -2266,5 +2274,5 @@ void SetItemNames (void)
 	combat_armor_index = ITEM_INDEX(FindItem("Teleport"));
 	body_armor_index   = ITEM_INDEX(FindItem("Nukes"));
 	power_screen_index = ITEM_INDEX(FindItem("Upgrader"));
-	power_shield_index = ITEM_INDEX(FindItem("Power Shield"));
+	power_shield_index = ITEM_INDEX(FindItem("Health"));
 }

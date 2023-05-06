@@ -289,20 +289,19 @@ void HelpComputer (edict_t *ent)
 		sk = "hard+";
 
 	// send the layout
-	Com_sprintf (string, sizeof(string),
-		"xv 202 yv 12 string2 \"%s\" "		// skill
-		"xv 0 yv 24 cstring2 \"%s\" "		// level name
-		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
-		"xv 0 yv 110 cstring2 \"%s\" "		// help 2
-		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
-		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ", 
-		sk,
-		level.level_name,
-		game.helpmessage1,
-		game.helpmessage2,
-		level.killed_monsters, level.total_monsters, 
-		level.found_goals, level.total_goals,
-		level.found_secrets, level.total_secrets);
+	Com_sprintf(string, sizeof(string),
+		"xv 32 yv 8 picn help "			// background
+		"xv 0 yv 24 cstring2 \"Dead Ops Arcade\" "		// level name
+		"xv 0 yv 54 cstring2 \"Survive infinite amount of\" "		// help 1
+		"xv 0 yv 64 cstring2 \"zombies rounds where your\" "		// help 1
+		"xv 0 yv 74 cstring2 \"only ally is your ability to run.\" "		// help 1
+		"xv 0 yv 106 cstring2 \"Loot drops spawn ocasionally\" "		// help 1
+		"xv 0 yv 116 cstring2 \"with limited time weapons/abilities\" "		// help 1
+		"xv 0 yv 126 cstring2 \"2 of them you get to keep\" "		// help 1
+		"xv 0 yv 136 cstring2 \"used them wisely!\" "		// help 1
+		"xv 50 yv 164 string2 \"Zombies   Round    \" "
+		"xv 50 yv 172 string2 \"   %i		    	 %i       \" ",
+		old_num, rond);
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);

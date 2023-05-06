@@ -5,7 +5,7 @@ void attack_think(edict_t* self) {
 	vec3_t forward;
 	vec3_t start;
 	
-	VectorSet(self->s.origin, self->owner->s.origin[0]+(rand()%20 +15), self->owner->s.origin[1]+ (rand() % 10 + 5), 20);
+	VectorSet(self->s.origin, self->owner->s.origin[0]+16, self->owner->s.origin[1]+ 6, 30);
 	VectorSet(self->s.angles, 0, self->owner->s.angles[1], 0);
 	VectorSet(start, self->s.origin[0], self->s.origin[1], self->owner->s.origin[2]);
 	AngleVectors(self->s.angles, forward, NULL, NULL);
